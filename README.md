@@ -1,6 +1,6 @@
 ## Installation (Debian)
 
-1. **Install dependencides:**
+1. **Install dependencies:**
     ```bash
     sudo apt install libgirepository1.0-dev gcc libcairo2-dev pkg-config python3-dev gir1.2-gtk-4.0
     ```
