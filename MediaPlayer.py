@@ -10,13 +10,11 @@ import configparser
 from utils import getFullPath
 
 def on_connect(client, userdata, flags, reason_code, properties):
-    if reason_code == 0:
-        mqtt_logger.info("Connected to MQTT broker")
-    else:
-        mqtt_logger.error(f"Connection to MQTT broker failed with return code {rc}")
+    mqtt_logger.info("Connected to Broker")
+    client.subscribe("#") # temp
 
-    # temp
-    client.subscribe("#")
+def on_disconnect(client, userdata, flags, reason_code, properties):
+    mqtt_logger.error(f"Lost Connection to Broker")
 
 def on_message(mosq, obj, msg):
     message = bson.loads(msg.payload)
@@ -25,10 +23,15 @@ def on_message(mosq, obj, msg):
     with open(config["MediaPlayer"]["current_template"], 'w') as file:
         file.write(message["html"])
 
-    window.load_url(config["MediaPlayer"]["current_template"])
+    window.load_url(getFullPath(config["MediaPlayer"]["current_template"]))
 
 def on_window_closed():
-    webview_logger.error("window has been closed")
+    webview_logger.error("Window has Been Closed")
+    quit()
+
+def quit():
+    client.loop_stop()
+    exit(0)
 
 if __name__ == '__main__':
 
@@ -37,19 +40,17 @@ if __name__ == '__main__':
     config.read("config.ini")
 
     # setup logging
-    logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', filename=config["MediaPlayer"]["log_file"])
+    logging.basicConfig(level=config["Logging"]["log_level"], format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', filename=config["Logging"]["log_file"])
     mqtt_logger = logging.getLogger("MQTTClient")
     webview_logger = logging.getLogger("webview")
 
-    # setup the mqtt client and attempt to connect
+    # setup the mqtt client and start loop
     client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
     client.on_message = on_message
     client.on_connect = on_connect
-    client.connect(config["MQTT"]["host"], int(config["MQTT"]["port"]), int(config["MQTT"]["keepalive"]))
-
-    # start the consuming loop
-    mqtt_thread = threading.Thread(target=client.loop_forever)
-    mqtt_thread.start()
+    client.on_disconnect = on_disconnect
+    client.connect_async(config["MQTT"]["host"], int(config["MQTT"]["port"]), int(config["MQTT"]["keepalive"]))
+    client.loop_start()
 
     # setup the window and display it
     window = webview.create_window('MediaPlayer', config["MediaPlayer"]["default_template"], fullscreen=True, confirm_close=False)
