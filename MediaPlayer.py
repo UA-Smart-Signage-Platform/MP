@@ -20,18 +20,10 @@ def on_message(mosq, obj, msg):
     message = bson.loads(msg.payload)
     mqtt_logger.info(f"Received message on topic '{msg.topic}': {message}")
     
-    with open(config["MediaPlayer"]["current_template"], 'w') as file:
+    with open("static/current.html", 'w') as file:
         file.write(message["html"])
 
-    window.load_url(getFullPath(config["MediaPlayer"]["current_template"]))
-
-def on_window_closed():
-    webview_logger.error("Window has Been Closed")
-    quit()
-
-def quit():
-    client.loop_stop()
-    exit(0)
+    window.load_url(getFullPath("static/current.html"))
 
 if __name__ == '__main__':
 
@@ -54,6 +46,5 @@ if __name__ == '__main__':
 
     # setup the window and display it
     window = webview.create_window('MediaPlayer', config["MediaPlayer"]["default_template"], fullscreen=True, confirm_close=False)
-    window.events.closed += on_window_closed
     webview.start()
 
