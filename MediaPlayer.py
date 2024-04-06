@@ -5,27 +5,47 @@ import sys
 import threading
 import paho.mqtt.client as mqtt
 import logging
-import bson
+import json
+import uuid
 import configparser
-from utils import getFullPath
+import utils
+from protocol import MessageProtocol
 
 def on_connect(client, userdata, flags, reason_code, properties):
     mqtt_logger.info("Connected to Broker")
-    client.subscribe("#") # temp
+
+    # subscribe to topic with our unique identifier
+    # so that the server can send us messages "directly"
+    client.subscribe(identifier)
+
+    # send register message
+    width, height = utils.getMonitorSize()
+    publish_message(client, "register", MessageProtocol.register(width, height, identifier))
 
 def on_disconnect(client, userdata, flags, reason_code, properties):
-    mqtt_logger.error(f"Lost Connection to Broker")
+    mqtt_logger.error("Lost Connection to Broker")
 
 def on_message(mosq, obj, msg):
-    message = bson.loads(msg.payload)
-    mqtt_logger.info(f"Received message on topic '{msg.topic}': {message}")
-    
-    with open("static/current.html", 'w') as file:
-        file.write(message["html"])
 
-    window.load_url(getFullPath("static/current.html"))
+    message = json.loads(msg.payload.decode())
+    mqtt_logger.info(f"Received message on topic '{msg.topic}': {message}")
+
+    method = message["method"]
+
+    if(method == "CONFIRM_REGISTER"):
+        pass
+
+    elif(method == "TEMPLATE"):
+        pass
+
+def publish_message(client, topic, payload):
+    client.publish(topic, payload)
+    mqtt_logger.info(f"Sent message on topic '{topic}': {payload}")
 
 if __name__ == '__main__':
+
+    # create unique uuid
+    identifier = str(uuid.uuid4())
 
     # load config
     config = configparser.ConfigParser()
