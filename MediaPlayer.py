@@ -58,6 +58,7 @@ if __name__ == '__main__':
 
     # setup the mqtt client and start loop
     client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
+    client.username_pw_set(config["MQTT"]["username"], config["MQTT"]["password"])
     client.on_message = on_message
     client.on_connect = on_connect
     client.on_disconnect = on_disconnect

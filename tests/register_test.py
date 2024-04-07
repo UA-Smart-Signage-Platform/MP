@@ -10,7 +10,6 @@ def on_message(client, userdata, msg):
     if(method == "REGISTER"):
         client.publish(message["uuid"], json.dumps({ "method":"CONFIRM_REGISTER", "group": group }))
         print("registered " + message["uuid"] + " to group " + group)
-        exit(0)
         
 
 if len(sys.argv) < 2:
@@ -24,6 +23,7 @@ config.read("config.ini")
 
 # create client
 mqttc = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
+mqttc.username_pw_set(config["MQTT"]["username"], config["MQTT"]["password"])
 
 # connect to broker
 host = config["MQTT"]["host"]
