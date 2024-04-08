@@ -3,8 +3,8 @@ import json
 class MessageProtocol:
 
     @classmethod
-    def register(cls, width, height, uuid):
-        message = { "method":"REGISTER", "width": width, "height":height, "uuid":uuid }
+    def register(cls, width, height, uuid, name):
+        message = { "method":"REGISTER", "width": width, "height":height, "uuid":uuid, "name":name }
         return json.dumps(message)
 
     @classmethod

@@ -20,7 +20,7 @@ def on_connect(client, userdata, flags, reason_code, properties):
 
     # send register message
     width, height = utils.get_monitor_size()
-    publish_message(client, "register", MessageProtocol.register(width, height, identifier))
+    publish_message(client, "register", MessageProtocol.register(width, height, identifier, name))
 
 def on_disconnect(client, userdata, flags, reason_code, properties):
     mqtt_logger.error("Lost Connection to Broker")
@@ -46,14 +46,15 @@ def publish_message(client, topic, payload):
 
 if __name__ == '__main__':
 
+    # load config
+    config = configparser.ConfigParser()
+    config.read("config.ini")
+
     # create unique uuid
     identifier = str(uuid.uuid4())
 
     group = -1
-
-    # load config
-    config = configparser.ConfigParser()
-    config.read("config.ini")
+    name = config["MQTT"]["name"]
 
     # setup logging
     logging.basicConfig(level=config["Logging"]["log_level"], format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', filename=config["Logging"]["log_file"])
