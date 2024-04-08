@@ -19,13 +19,13 @@ def on_connect(client, userdata, flags, reason_code, properties):
     client.subscribe(identifier)
 
     # send register message
-    width, height = utils.getMonitorSize()
+    width, height = utils.get_monitor_size()
     publish_message(client, "register", MessageProtocol.register(width, height, identifier))
 
 def on_disconnect(client, userdata, flags, reason_code, properties):
     mqtt_logger.error("Lost Connection to Broker")
 
-def on_message(mosq, obj, msg):
+def on_message(client, userdata, msg):
 
     message = json.loads(msg.payload.decode())
     mqtt_logger.info(f"Received message on topic '{msg.topic}': {message}")
@@ -33,10 +33,12 @@ def on_message(mosq, obj, msg):
     method = message["method"]
 
     if(method == "CONFIRM_REGISTER"):
-        pass
+        group = message["group"]
+        client.subscribe("group/" + group)
 
     elif(method == "TEMPLATE"):
-        pass
+        utils.store_static("current.html", message["html"])
+        window.load_url(utils.get_full_path("static/current.html"))
 
 def publish_message(client, topic, payload):
     client.publish(topic, payload)
@@ -46,6 +48,8 @@ if __name__ == '__main__':
 
     # create unique uuid
     identifier = str(uuid.uuid4())
+
+    group = -1
 
     # load config
     config = configparser.ConfigParser()
