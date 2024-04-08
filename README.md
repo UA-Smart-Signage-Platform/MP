@@ -27,5 +27,5 @@
 
 6. **Run the MediaPlayer:**
     ```bash
-    python MediaPlayer.py [path/to/html]
+    python MediaPlayer.py
     ```
