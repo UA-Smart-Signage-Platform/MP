@@ -1,5 +1,11 @@
 import os
 from screeninfo import get_monitors
+import re
+
+# strip html from string
+def striphtml(data):
+    p = re.compile(r'<.*?>')
+    return p.sub('', data)
 
 # get the correct path to be given
 # to pywebview.load_url()
