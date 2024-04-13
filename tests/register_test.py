@@ -22,7 +22,7 @@ config = configparser.ConfigParser()
 config.read("config.ini")
 
 # create client
-mqttc = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
+mqttc = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2, transport=config["MQTT"]["transport"])
 mqttc.username_pw_set(config["MQTT"]["username"], config["MQTT"]["password"])
 
 # connect to broker
@@ -32,5 +32,5 @@ keepalive = int(config["MQTT"]["keepalive"])
 mqttc.connect(host, port, keepalive)
 
 mqttc.on_message = on_message
-mqttc.subscribe("register")
+mqttc.subscribe(config["MQTT"]["register"])
 mqttc.loop_forever()

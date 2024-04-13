@@ -13,6 +13,9 @@ from protocol import MessageProtocol
 
 def on_connect(client, userdata, flags, reason_code, properties):
     mqtt_logger.info("Connected to Broker")
+    
+    if registered:
+        return
 
     # subscribe to topic with our unique identifier
     # so that the server can send us messages "directly"
@@ -20,7 +23,7 @@ def on_connect(client, userdata, flags, reason_code, properties):
 
     # send register message
     width, height = utils.get_monitor_size()
-    publish_message(client, "register", MessageProtocol.register(width, height, identifier, name))
+    publish_message(client, config["MQTT"]["register"], MessageProtocol.register(width, height, identifier, name))
 
 def on_disconnect(client, userdata, flags, reason_code, properties):
     mqtt_logger.error("Lost Connection to Broker")
@@ -33,8 +36,7 @@ def on_message(client, userdata, msg):
     method = message["method"]
 
     if(method == "CONFIRM_REGISTER"):
-        group = message["group"]
-        client.subscribe("group/" + group)
+        registered = True
 
     elif(method == "TEMPLATE"):
         utils.store_static("current.html", message["html"])
@@ -53,7 +55,7 @@ if __name__ == '__main__':
     # create unique uuid
     identifier = str(uuid.uuid4())
 
-    group = -1
+    registered = False
     name = config["MQTT"]["name"]
 
     # setup logging
@@ -62,7 +64,7 @@ if __name__ == '__main__':
     webview_logger = logging.getLogger("webview")
 
     # setup the mqtt client and start loop
-    client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
+    client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2, transport=config["MQTT"]["transport"])
     client.username_pw_set(config["MQTT"]["username"], config["MQTT"]["password"])
     client.on_message = on_message
     client.on_connect = on_connect

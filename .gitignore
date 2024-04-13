@@ -162,3 +162,4 @@ cython_debug/
 testing/
 current.html
 *.mp4
+*.png
