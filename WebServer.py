@@ -1,9 +1,12 @@
-from flask import Flask
+from flask import Flask, request
 import requests
 import json
 from flask_cors import CORS
 import xml.etree.ElementTree as ET
 from utils import striphtml
+from flask import render_template
+import configparser
+import os
 
 app = Flask(__name__)
 CORS(app)
@@ -35,3 +38,29 @@ def ua_news():
 
     # remove any embedded html
     return striphtml(content)
+
+@app.route("/config", methods=['GET', 'POST'])
+def config():
+
+    config = configparser.ConfigParser()
+    if os.path.isfile("config.ini"):
+        config.read('config.ini')
+    else:
+        config.read('default_config.ini')
+
+    if request.method == 'POST':
+        for section in config.sections():
+            for option in config.options(section):
+                new_value = request.form.get(option)
+                config.set(section, option, new_value)
+
+        with open('config.ini', 'w') as configfile:
+            config.write(configfile)
+
+        return "Configuration updated successfully!"
+
+    if request.method == 'GET':
+        return render_template('config.html', config=config)
+
+def run():
+    app.run(host="0.0.0.0", port=5000, debug=False, use_reloader=False)
