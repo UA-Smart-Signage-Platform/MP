@@ -10,69 +10,67 @@ import uuid
 import configparser
 import utils
 from protocol import MessageProtocol
+import WebServer
+import threading
+import network_manager
+from mqtt_client import MQTTClient
 
-def on_connect(client, userdata, flags, reason_code, properties):
-    mqtt_logger.info("Connected to Broker")
-    
-    if registered:
-        return
+# def wait_for_config():
+#     pass
 
-    # subscribe to topic with our unique identifier
-    # so that the server can send us messages "directly"
-    client.subscribe(identifier)
+def setup():
 
-    # send register message
-    width, height = utils.get_monitor_size()
-    publish_message(client, config["MQTT"]["register"], MessageProtocol.register(width, height, identifier, name))
-
-def on_disconnect(client, userdata, flags, reason_code, properties):
-    mqtt_logger.error("Lost Connection to Broker")
-
-def on_message(client, userdata, msg):
-
-    message = json.loads(msg.payload.decode())
-    mqtt_logger.info(f"Received message on topic '{msg.topic}': {message}")
-
-    method = message["method"]
-
-    if(method == "CONFIRM_REGISTER"):
-        registered = True
-
-    elif(method == "TEMPLATE"):
-        utils.store_static("current.html", message["html"])
-        window.load_url(utils.get_full_path("static/current.html"))
-
-def publish_message(client, topic, payload):
-    client.publish(topic, payload)
-    mqtt_logger.info(f"Sent message on topic '{topic}': {payload}")
-
-if __name__ == '__main__':
+    while not os.path.exists("config.ini"):
+        time.sleep(1)
 
     # load config
     config = configparser.ConfigParser()
     config.read("config.ini")
 
-    # create unique uuid
-    identifier = str(uuid.uuid4())
-
-    registered = False
-    name = config["MQTT"]["name"]
-
     # setup logging
     logging.basicConfig(level=config["Logging"]["log_level"], format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', filename=config["Logging"]["log_file"])
     mqtt_logger = logging.getLogger("MQTTClient")
     webview_logger = logging.getLogger("webview")
+    
+    # create an instante of the mqtt client and start the loop
+    mqtt_client = MQTTClient(mqtt_logger, config, window)
+    mqtt_client.start()
+    
+    # change to the default template
+    window.load_url(utils.get_full_path(default_config["MediaPlayer"]["default_template"]))
+        
+if __name__ == '__main__':
 
-    # setup the mqtt client and start loop
-    client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2, transport=config["MQTT"]["transport"])
-    client.username_pw_set(config["MQTT"]["username"], config["MQTT"]["password"])
-    client.on_message = on_message
-    client.on_connect = on_connect
-    client.on_disconnect = on_disconnect
-    client.connect_async(config["MQTT"]["host"], int(config["MQTT"]["port"]), int(config["MQTT"]["keepalive"]))
-    client.loop_start()
+    # load default config
+    default_config = configparser.ConfigParser()
+    default_config.read("default_config.ini")
+    
+    flask_thread = threading.Thread(target=WebServer.run, daemon=True)
+    flask_thread.start()
+    
+    window = None
 
-    # setup the window and display it
-    window = webview.create_window('MediaPlayer', config["MediaPlayer"]["default_template"], fullscreen=True, confirm_close=False)
-    webview.start()
+    if not os.path.isfile("config.ini"):
+
+        ssid = "DetiSignage-" + str(uuid.uuid4())[:8]
+        password = str(uuid.uuid4())[:8]
+        network_manager.create_hotspot(ssid,password)
+        
+        utils.generate_wifi_qrcode(ssid, password, target="static/qr_code.png")
+        
+        url = utils.get_local_ip() + ":5000/config"
+
+        html = utils.render_jinja_html("templates", "setup.html", ssid=ssid, password=password, url=url)
+        utils.store_static("setup.html", html)
+        
+        window = webview.create_window('MediaPlayer', "static/setup.html", fullscreen=True)
+    
+    else:
+        window = webview.create_window('MediaPlayer', default_config["MediaPlayer"]["default_template"], fullscreen=True, confirm_close=False)
+    
+    webview.start(func=setup)
+
+
+
+
 

@@ -7,7 +7,18 @@
 </head>
 <body>
     <h1>Current Configuration</h1>
+
     <form action="/config" method="post">
+        <h2>Network</h2>
+        <label for="network">Choose a Network:</label>
+        <select id="network" name="network">
+            {% for network in networks %}
+                <option value="{{ network }}">{{ network }}</option>
+            {% endfor %}
+        </select>
+        <label for="wifi_password">Password:</label>
+        <input type="password" id="wifi_password" name="wifi_password">
+
         {% for section, options in config.items() %}
             {% if section != 'DEFAULT' %}
                 <h2>{{ section }}</h2>

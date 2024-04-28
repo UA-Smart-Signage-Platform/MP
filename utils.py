@@ -1,6 +1,10 @@
 import os
 from screeninfo import get_monitors
 import re
+import jinja2
+import socket
+import qrcode
+
 
 # strip html from string
 def striphtml(data):
@@ -22,3 +26,38 @@ def get_monitor_size():
 def store_static(filename, content):
     with open("static/" + filename, 'w') as file:
         file.write(content)
+
+# function to load a jinja template
+# into string without using flask
+def render_jinja_html(template_loc,file_name,**context):
+
+    return jinja2.Environment(
+        loader=jinja2.FileSystemLoader(template_loc+'/')
+    ).get_template(file_name).render(context)
+
+def get_local_ip():
+    return socket.gethostbyname(socket.gethostname())
+
+def generate_wifi_qrcode(
+    ssid: str,
+    password: str,
+    security_type="WPA",
+    target: str = "static/wifi_qrcode.png",
+) -> None:
+    wifi_data = f"WIFI:T:{security_type};S:{ssid};P:{password};;"
+
+    qr = qrcode.QRCode(
+        version=1,
+        error_correction=qrcode.constants.ERROR_CORRECT_L,
+        box_size=10,
+        border=4,
+    )
+
+    qr.add_data(wifi_data)
+    qr.make(fit=True)
+
+    qr_code_image = qr.make_image(
+        fill_color="black", back_color="white"
+    )
+
+    qr_code_image.save(target)

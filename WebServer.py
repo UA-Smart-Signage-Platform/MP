@@ -4,9 +4,10 @@ import json
 from flask_cors import CORS
 import xml.etree.ElementTree as ET
 from utils import striphtml
-from flask import render_template
+from flask import render_template, redirect, url_for
 import configparser
 import os
+import network_manager
 
 app = Flask(__name__)
 CORS(app)
@@ -48,7 +49,9 @@ def config():
     else:
         config.read('default_config.ini')
 
+    # if it's a post, update the config
     if request.method == 'POST':
+
         for section in config.sections():
             for option in config.options(section):
                 new_value = request.form.get(option)
@@ -57,10 +60,19 @@ def config():
         with open('config.ini', 'w') as configfile:
             config.write(configfile)
 
-        return "Configuration updated successfully!"
+        ssid = request.form.get("network")
+        password = request.form.get("wifi_password")
 
+        if password != "":
+            network_manager.connect(ssid, password)
+
+        return redirect(url_for('config'))
+
+    # if it's a get, show the config
     if request.method == 'GET':
-        return render_template('config.html', config=config)
+
+        networks = network_manager.get_networks()
+        return render_template('config.html', config=config, networks=networks)
 
 def run():
     app.run(host="0.0.0.0", port=5000, debug=False, use_reloader=False)
