@@ -64,15 +64,20 @@ def config():
         password = request.form.get("wifi_password")
 
         if password != "":
+            h_ssid, h_password = network_manager.get_ssid_and_password()
             network_manager.connect(ssid, password)
+            
+            if not network_manager.has_internet():
+                network_manager.create_hotspot(h_ssid, h_password)
 
         return redirect(url_for('config'))
 
     # if it's a get, show the config
     if request.method == 'GET':
 
-        networks = network_manager.get_networks()
+        networks = app.config["networks"]
         return render_template('config.html', config=config, networks=networks)
 
-def run():
-    app.run(host="0.0.0.0", port=5000, debug=False, use_reloader=False)
+def run(networks = None):
+    app.config["networks"] = networks
+    app.run(host="0.0.0.0", port=5000, use_reloader=False)

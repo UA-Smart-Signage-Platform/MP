@@ -15,12 +15,12 @@ import threading
 import network_manager
 from mqtt_client import MQTTClient
 
-# def wait_for_config():
-#     pass
-
 def setup():
 
     while not os.path.exists("config.ini"):
+        time.sleep(1)
+        
+    while not network_manager.has_internet():
         time.sleep(1)
 
     # load config
@@ -31,6 +31,8 @@ def setup():
     logging.basicConfig(level=config["Logging"]["log_level"], format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', filename=config["Logging"]["log_file"])
     mqtt_logger = logging.getLogger("MQTTClient")
     webview_logger = logging.getLogger("webview")
+    logging.getLogger('werkzeug').disabled = True
+    logging.getLogger('urllib3.connectionpool').disabled = True
     
     # create an instante of the mqtt client and start the loop
     mqtt_client = MQTTClient(mqtt_logger, config, window)
@@ -45,12 +47,11 @@ if __name__ == '__main__':
     default_config = configparser.ConfigParser()
     default_config.read("default_config.ini")
     
-    flask_thread = threading.Thread(target=WebServer.run, daemon=True)
+    networks = network_manager.get_networks()
+    flask_thread = threading.Thread(target=WebServer.run, daemon=True, args=(networks,))
     flask_thread.start()
-    
-    window = None
 
-    if not os.path.isfile("config.ini"):
+    if not os.path.isfile("config.ini") or not network_manager.has_internet():
 
         ssid = "DetiSignage-" + str(uuid.uuid4())[:8]
         password = str(uuid.uuid4())[:8]
