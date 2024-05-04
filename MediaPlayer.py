@@ -7,6 +7,7 @@ import paho.mqtt.client as mqtt
 import logging
 import json
 import uuid
+import requests
 import configparser
 import utils
 import urllib.request
@@ -44,8 +45,17 @@ def on_message(client, userdata, msg):
         files = message["files"]
         if isinstance(files, list) and len(files) != 0:
             for url in files:
-                filename = url.split("/")[-1]
-                urllib.request.urlretrieve(url, "static/" + filename)
+                response = requests.head(url)
+                if "Content-Disposition" in response.headers:
+                    content_disposition = response.headers["Content-Disposition"]
+                    filename_index = content_disposition.find("filename=")
+                    if filename_index != -1:
+                        filename = content_disposition[filename_index + len("filename="):]
+                        filename = filename.strip('"')
+                        
+                        response = requests.get(url)
+                        with open(os.path.join("static", filename), "wb") as file:
+                            file.write(response.content)
 
         utils.store_static("current.html", message["html"])
         window.load_url(utils.get_full_path("static/current.html"))
