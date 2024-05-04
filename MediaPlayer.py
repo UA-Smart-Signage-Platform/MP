@@ -45,17 +45,7 @@ def on_message(client, userdata, msg):
         files = message["files"]
         if isinstance(files, list) and len(files) != 0:
             for url in files:
-                response = requests.head(url)
-                if "Content-Disposition" in response.headers:
-                    content_disposition = response.headers["Content-Disposition"]
-                    filename_index = content_disposition.find("filename=")
-                    if filename_index != -1:
-                        filename = content_disposition[filename_index + len("filename="):]
-                        filename = filename.strip('"')
-                        
-                        response = requests.get(url)
-                        with open(os.path.join("static", filename), "wb") as file:
-                            file.write(response.content)
+                utils.download_file(url, "static")
 
         utils.store_static("current.html", message["html"])
         window.load_url(utils.get_full_path("static/current.html"))
