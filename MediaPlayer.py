@@ -7,8 +7,10 @@ import paho.mqtt.client as mqtt
 import logging
 import json
 import uuid
+import requests
 import configparser
 import utils
+import urllib.request
 from protocol import MessageProtocol
 
 def on_connect(client, userdata, flags, reason_code, properties):
@@ -39,6 +41,12 @@ def on_message(client, userdata, msg):
         registered = True
 
     elif(method == "TEMPLATE"):
+
+        files = message["files"]
+        if isinstance(files, list) and len(files) != 0:
+            for url in files:
+                utils.download_file(url, "static")
+
         utils.store_static("current.html", message["html"])
         window.load_url(utils.get_full_path("static/current.html"))
 
