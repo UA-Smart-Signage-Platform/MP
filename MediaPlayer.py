@@ -43,7 +43,7 @@ def setup():
     mqtt_client.start()
     
     # change to the default template
-    window.load_url(utils.get_full_path(default_config["MediaPlayer"]["default_template"]))
+    window.load_url(utils.get_full_path(config["MediaPlayer"]["default_template"]))
         
 if __name__ == '__main__':
 
