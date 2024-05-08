@@ -1,11 +1,13 @@
 import os
 import time
+import subprocess
+from wifi import Cell
 
 def get_networks():
     return os.popen("nmcli -f SSID device wifi | awk 'NR>1' | sed 's/[[:space:]]*$//'").read().split("\n")[:-1]
     
 def create_hotspot(ssid, password):
-    os.system(f"nmcli dev wifi hotspot ssid {ssid} password '{password}'")
+    return subprocess.run(["nmcli", "dev", "wifi", "hotspot", "ssid", ssid, "password", password]).returncode
         
 def connect(ssid, password):
     if is_hotspot():
@@ -13,9 +15,9 @@ def connect(ssid, password):
         os.system("nmcli r wifi on")
         while get_networks() == []:
             time.sleep(1) 
-            
-    os.system(f"nmcli device wifi connect {ssid} password {password}")
-    
+
+    return subprocess.run(["nmcli", "dev", "wifi", "connect", ssid, "password", password]).returncode
+     
 def has_internet():
     status = os.popen("nmcli networking connectivity check").read().strip()
     if status == "full":
