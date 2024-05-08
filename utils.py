@@ -4,7 +4,7 @@ import re
 import jinja2
 import socket
 import qrcode
-
+import requests
 
 # strip html from string
 def striphtml(data):
@@ -61,3 +61,19 @@ def generate_wifi_qrcode(
     )
 
     qr_code_image.save(target)
+    
+# download a file to a specific path
+def download_file(url, path_to_save):
+    response = requests.head(url)
+
+    if "Content-Disposition" in response.headers:
+        content_disposition = response.headers["Content-Disposition"]
+        filename_index = content_disposition.find("filename=")
+        filename = content_disposition[filename_index + len("filename="):]
+        filename = filename.strip('"')
+    else:
+        filename = url.split("/")[-1]
+                        
+    response = requests.get(url)
+    with open(os.path.join(path_to_save, filename), "wb") as file:
+        file.write(response.content)

@@ -35,7 +35,7 @@ class MQTTClient:
 
         # send register message
         width, height = utils.get_monitor_size()
-        self.publish_message(client, self.config["MQTT"]["register_topic"], MessageProtocol.register(width, height, self.identifier, self.name))
+        self.publish_message(self.config["MQTT"]["register_topic"], MessageProtocol.register(width, height, self.identifier, self.name))
 
     def on_disconnect(self, client, userdata, flags, reason_code, properties):
         self.logger.error("Lost Connection to Broker")

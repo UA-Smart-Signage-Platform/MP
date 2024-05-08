@@ -7,8 +7,10 @@ import paho.mqtt.client as mqtt
 import logging
 import json
 import uuid
+import requests
 import configparser
 import utils
+import urllib.request
 from protocol import MessageProtocol
 import WebServer
 import threading
