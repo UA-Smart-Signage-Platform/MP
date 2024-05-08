@@ -12,6 +12,7 @@ import network_manager
 app = Flask(__name__)
 CORS(app)
 
+
 @app.route("/ipma/temperature")
 def ipma_temp():
     url = "https://api.ipma.pt/open-data/observation/meteorology/stations/observations.json"
@@ -25,6 +26,7 @@ def ipma_temp():
     result = response[key][id_aveiro]["temperatura"]
 
     return str(result) + "º C"
+
 
 @app.route("/ua/news")
 def ua_news():
@@ -40,7 +42,38 @@ def ua_news():
     # remove any embedded html
     return striphtml(content)
 
-@app.route("/config", methods=['GET', 'POST'])
+
+@app.route("/updateConfig", methods=['POST'])
+def updateConfig():
+
+    config = configparser.ConfigParser()
+    if os.path.isfile("config.ini"):
+        config.read('config.ini')
+    else:
+        config.read('default_config.ini')
+
+    for section in config.sections():
+        for option in config.options(section):
+            new_value = request.form.get(option)
+            config.set(section, option, new_value)
+
+    with open('config.ini', 'w') as configfile:
+        config.write(configfile)
+
+    ssid = request.form.get("network")
+    password = request.form.get("wifi_password")
+
+    if password != "":
+        h_ssid, h_password = network_manager.get_ssid_and_password()
+        network_manager.connect(ssid, password)
+
+        if not network_manager.has_internet():
+            network_manager.create_hotspot(h_ssid, h_password)
+
+    return redirect(url_for('config'))
+
+
+@app.route("/config", methods=['GET'])
 def config():
 
     config = configparser.ConfigParser()
@@ -49,35 +82,10 @@ def config():
     else:
         config.read('default_config.ini')
 
-    # if it's a post, update the config
-    if request.method == 'POST':
+    networks = app.config["networks"]
+    return render_template('config.html', config=config, networks=networks)
 
-        for section in config.sections():
-            for option in config.options(section):
-                new_value = request.form.get(option)
-                config.set(section, option, new_value)
 
-        with open('config.ini', 'w') as configfile:
-            config.write(configfile)
-
-        ssid = request.form.get("network")
-        password = request.form.get("wifi_password")
-
-        if password != "":
-            h_ssid, h_password = network_manager.get_ssid_and_password()
-            network_manager.connect(ssid, password)
-            
-            if not network_manager.has_internet():
-                network_manager.create_hotspot(h_ssid, h_password)
-
-        return redirect(url_for('config'))
-
-    # if it's a get, show the config
-    if request.method == 'GET':
-
-        networks = app.config["networks"]
-        return render_template('config.html', config=config, networks=networks)
-
-def run(networks = None):
+def run(networks=None):
     app.config["networks"] = networks
     app.run(host="0.0.0.0", port=5000, use_reloader=False)

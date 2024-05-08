@@ -32,7 +32,7 @@ def store_static(filename, content):
 def render_jinja_html(template_loc,file_name,**context):
 
     return jinja2.Environment(
-        loader=jinja2.FileSystemLoader(template_loc+'/')
+        loader=jinja2.FileSystemLoader(template_loc+'/'), autoescape=True
     ).get_template(file_name).render(context)
 
 def get_local_ip():
