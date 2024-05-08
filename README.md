@@ -29,4 +29,19 @@
     ```bash
     python MediaPlayer.py
     ```
-.
+
+
+## Troubleshooting
+
+1. Artifacting in what is being displayed
+
+    this seems to be a problem with the compositor and the command `export WEBKIT_DISABLE_COMPOSITING_MODE=1` seems to fix it
+
+2. MediaPlayer window takes too long to open
+
+    this is a problem with GTK applications and can be fixed by uninstalling/stopping the xdg-desktop-portal
+
+3. When inputing the wrong password in the config page a nm-applet pop up appears asking for password
+
+    this is due to the fact that nm-applet asks for a password when an invalid password is given in an nmcli command. to fix this either remove nm-applet or launch it with the --no-agent flag
+    
