@@ -13,12 +13,11 @@ class MQTTClient:
         self.identifier = str(uuid.uuid4())
         self.name = config["MQTT"]["name"]
     
-        client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2, transport=self.config["MQTT"]["transport"])
-        client.username_pw_set(self.config["MQTT"]["username"], self.config["MQTT"]["password"])
-        client.on_message = self.on_message
-        client.on_connect = self.on_connect
-        client.on_disconnect = self.on_disconnect
-        self.client = client
+        self.client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2, transport=self.config["MQTT"]["transport"])
+        self.client.username_pw_set(self.config["MQTT"]["username"], self.config["MQTT"]["password"])
+        self.client.on_message = self.on_message
+        self.client.on_connect = self.on_connect
+        self.client.on_disconnect = self.on_disconnect
         
     def start(self):
         self.client.connect_async(self.config["MQTT"]["host"], int(self.config["MQTT"]["port"]), int(self.config["MQTT"]["keepalive"]))
@@ -55,6 +54,6 @@ class MQTTClient:
             utils.store_static("current.html", message["html"])
             self.window.load_url(utils.get_full_path("static/current.html"))
 
-    def publish_message(self, client, topic, payload):
-        client.publish(topic, payload)
+    def publish_message(self, topic, payload):
+        self.client.publish(topic, payload)
         self.logger.info(f"Sent message on topic '{topic}': {payload}")
