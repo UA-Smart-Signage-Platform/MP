@@ -17,9 +17,12 @@ import threading
 import network_manager
 from mqtt_client import MQTTClient
 
+CONFIG_FILE = "config.ini"
+DEFAULT_CONFIG_FILE = "default_config.ini"
+
 def setup():
 
-    while not os.path.exists("config.ini"):
+    while not os.path.exists(CONFIG_FILE):
         time.sleep(1)
         
     while not network_manager.has_internet():
@@ -27,12 +30,11 @@ def setup():
 
     # load config
     config = configparser.ConfigParser()
-    config.read("config.ini")
+    config.read(CONFIG_FILE)
 
     # setup logging
     logging.basicConfig(level=config["Logging"]["log_level"], format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', filename=config["Logging"]["log_file"])
     mqtt_logger = logging.getLogger("MQTTClient")
-    webview_logger = logging.getLogger("webview")
     logging.getLogger('werkzeug').disabled = True
     logging.getLogger('urllib3.connectionpool').disabled = True
     
@@ -47,13 +49,13 @@ if __name__ == '__main__':
 
     # load default config
     default_config = configparser.ConfigParser()
-    default_config.read("default_config.ini")
+    default_config.read(DEFAULT_CONFIG_FILE)
     
     networks = network_manager.get_networks()
     flask_thread = threading.Thread(target=WebServer.run, daemon=True, args=(networks,))
     flask_thread.start()
 
-    if not os.path.isfile("config.ini") or not network_manager.has_internet():
+    if not os.path.isfile(CONFIG_FILE) or not network_manager.has_internet():
 
         ssid = "DetiSignage-" + str(uuid.uuid4())[:8]
         password = str(uuid.uuid4())[:8]
