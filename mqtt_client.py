@@ -51,6 +51,12 @@ class MQTTClient:
             self.registered = True
 
         elif(method == "TEMPLATE"):
+
+            files = message["files"]
+            if isinstance(files, list) and len(files) != 0:
+                for url in files:
+                    utils.download_file(url, "static")
+
             utils.store_static("current.html", message["html"])
             self.window.load_url(utils.get_full_path("static/current.html"))
 
