@@ -12,6 +12,7 @@ import configparser
 import utils
 import urllib.request
 from protocol import MessageProtocol
+from scheduler import Scheduler
 
 def on_connect(client, userdata, flags, reason_code, properties):
     mqtt_logger.info("Connected to Broker")
@@ -40,15 +41,15 @@ def on_message(client, userdata, msg):
     if(method == "CONFIRM_REGISTER"):
         registered = True
 
-    elif(method == "TEMPLATE"):
+    elif(method == "RULES"):
 
         files = message["files"]
         if isinstance(files, list) and len(files) != 0:
             for url in files:
                 utils.download_file(url, "static")
-
-        utils.store_static("current.html", message["html"])
-        window.load_url(utils.get_full_path("static/current.html"))
+        
+        rules = message["rules"]
+        scheduler.set_rules(message["rules"])
 
 def publish_message(client, topic, payload):
     client.publish(topic, payload)
@@ -82,5 +83,11 @@ if __name__ == '__main__':
 
     # setup the window and display it
     window = webview.create_window('MediaPlayer', config["MediaPlayer"]["default_template"], fullscreen=True, confirm_close=False)
+    
+    # setup scheduler
+    scheduler = Scheduler(window)
+    scheduler_thread = threading.Thread(target=scheduler.main_loop)
+    scheduler_thread.start()
+    
     webview.start()
 

@@ -61,7 +61,7 @@ class SchedulerRule:
             end_date = datetime.strptime(schedule['endDate'], '%Y-%m-%d')
 
         new_rule = SchedulerRule(start_hour, start_minute, end_hour, end_minute,
-                        start_date, end_date, schedule["priority"], schedule["weekdays"], rule["template"])
+                        start_date, end_date, schedule["priority"], schedule["weekdays"], rule["html"])
 
         if new_rule.start == None or new_rule.end == None:
             return None
@@ -70,12 +70,22 @@ class SchedulerRule:
 
 class Scheduler:
 
-    def __init__(self, window, rules):
+    def __init__(self, window):
         self.window = window
-        self.rules = [SchedulerRule.parse_rule(rule) for rule in rules if SchedulerRule.parse_rule(rule) is not None]
         self.current_template = None
+        self.rules = None
+        self.stop = False
+
+    def set_rules(self, rules):
+        self.rules = [SchedulerRule.parse_rule(rule) for rule in rules if SchedulerRule.parse_rule(rule) is not None]
+        self.stop = True
 
     def main_loop(self):
+
+        while self.rules == None:
+            time.sleep(1)
+
+        self.stop = False
 
         # step 1 - get the current rule
 
@@ -116,7 +126,8 @@ class Scheduler:
         if next_iteration_timestamp is not None:
             delay = next_iteration_timestamp - current_time
             print("next task at", datetime.fromtimestamp(next_iteration_timestamp))
-            time.sleep(delay)
+            while self.stop == False and time.time() < next_iteration_timestamp:
+                time.sleep(1)
             self.main_loop()
         else:
             print("No more scheduled tasks.")
