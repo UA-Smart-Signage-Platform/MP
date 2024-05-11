@@ -49,7 +49,7 @@ def on_message(client, userdata, msg):
                 utils.download_file(url, "static")
         
         rules = message["rules"]
-        scheduler.set_rules(message["rules"])
+        scheduler.set_rules(rules)
 
 def publish_message(client, topic, payload):
     client.publish(topic, payload)
