@@ -44,7 +44,7 @@ def ua_news():
 
 
 @app.route("/updateConfig", methods=['POST'])
-def updateConfig():
+def update_config():
 
     config = configparser.ConfigParser()
     if os.path.isfile("config.ini"):
