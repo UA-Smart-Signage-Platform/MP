@@ -91,8 +91,24 @@ class Scheduler:
 
         self.stop = False
 
-        # step 1 - get the current rule
+        # step 1 - display the current rule
+        self.display(self.get_current_rule())
 
+        # this sleep is to "fix" problems with rrule
+        # giving old values
+        time.sleep(5)
+
+        # step 2 - sleep until next iteration
+        next_iteration_timestamp = self.get_next_iteration_timestamp()
+        if next_iteration_timestamp is not None:
+            self.logger.info(f"Next Iteration at {datetime.fromtimestamp(next_iteration_timestamp)}")
+            while self.stop == False and time.time() < next_iteration_timestamp:
+                time.sleep(1)
+            self.main_loop()
+        else:
+            self.logger.info("No More Rules")
+
+    def get_current_rule(self):
         current_rule = None
         current_time = time.time()
 
@@ -103,26 +119,11 @@ class Scheduler:
             if current_rule == None or rule.priority < current_rule.priority:
                 current_rule = rule
 
-        if current_rule == None:
-            if self.config.getboolean('MediaPlayer', 'savings_mode'):
-                self.logger.info(f"No Rule to be Displayed. Blanking Screen")
-                os.system("xset dpms force off")
-            else:
-                self.logger.info(f"No Rule to be Displayed. Displaying Default Template")
-                self.window.load_url(self.config["MediaPlayer"]["default_template"])
-            
-            self.current_template = None
-        else:
-            os.system("xset dpms force on")
-            self.logger.info(f"Displaying Template for Fule [{current_rule.start}]-[{current_rule.end}]")
-            if self.current_template != current_rule.template: 
-                self.current_template = current_rule.template
-                utils.store_static("current.html", current_rule.template)
-                self.window.load_url(utils.get_full_path("static/current.html"))
+        return current_rule
 
-        # step 2 - schedule next iteration
-        time.sleep(5)
+    def get_next_iteration_timestamp(self):
         next_iteration_timestamp = None
+        current_time = time.time()
 
         for rule in self.rules:
             for timestamp in [rule.start.timestamp(), rule.end.timestamp()]:
@@ -132,12 +133,23 @@ class Scheduler:
 
                 if next_iteration_timestamp == None or current_time < timestamp < next_iteration_timestamp:
                     next_iteration_timestamp = timestamp
+        
+        return next_iteration_timestamp
 
-        if next_iteration_timestamp is not None:
-            delay = next_iteration_timestamp - current_time
-            self.logger.info(f"Next Iteration at {datetime.fromtimestamp(next_iteration_timestamp)}")
-            while self.stop == False and time.time() < next_iteration_timestamp:
-                time.sleep(1)
-            self.main_loop()
+    def display(self, rule):
+        if rule == None:
+            if self.config.getboolean('MediaPlayer', 'savings_mode'):
+                self.logger.info("No Rule to be Displayed. Blanking Screen")
+                os.system("xset dpms force off")
+            else:
+                self.logger.info("No Rule to be Displayed. Displaying Default Template")
+                self.window.load_url(self.config["MediaPlayer"]["default_template"])
+            
+            self.current_template = None
         else:
-            print("No more scheduled tasks.")
+            os.system("xset dpms force on")
+            self.logger.info(f"Displaying Template for Fule [{rule.start}]-[{rule.end}]")
+            if self.current_template != rule.template: 
+                self.current_template = rule.template
+                utils.store_static("current.html", rule.template)
+                self.window.load_url(utils.get_full_path("static/current.html"))
