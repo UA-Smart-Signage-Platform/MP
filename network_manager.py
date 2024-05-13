@@ -2,6 +2,7 @@ import os
 import time
 import subprocess
 import wifi
+import shlex
 
 def get_networks():
     return os.popen("nmcli -f SSID device wifi | awk 'NR>1' | sed 's/[[:space:]]*$//'").read().split("\n")[:-1]
@@ -16,8 +17,18 @@ def connect(ssid, password):
         while get_networks() == []:
             time.sleep(1) 
 
-    return subprocess.run(["nmcli", "dev", "wifi", "connect", ssid, "password", password]).returncode
-     
+    if not (3 <= len(ssid) <= 32 and 8 <= len(password) <= 63):
+        return
+
+    # add quotation marks to the
+    # ssid and password
+    ssid = shlex.quote(ssid)
+    password = shlex.quote(password)
+
+    command = ["nmcli", "dev", "wifi", "connect", ssid, "password", password]
+    return subprocess.run(command).returncode
+
+
 def has_internet():
     status = os.popen("nmcli networking connectivity check").read().strip()
     if status == "full":
