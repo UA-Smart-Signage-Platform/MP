@@ -80,7 +80,7 @@ def config():
 
     config = configparser.ConfigParser()
     if os.path.isfile(CONFIG_FILE):
-        config.read(DEFAULT_CONFIG_FILE)
+        config.read(CONFIG_FILE)
     else:
         config.read(DEFAULT_CONFIG_FILE)
 
