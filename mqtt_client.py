@@ -5,9 +5,9 @@ from protocol import MessageProtocol
 import json
 
 class MQTTClient:
-    def __init__(self, logger, config, window):
+    def __init__(self, logger, config, scheduler):
         self.logger = logger
-        self.window = window
+        self.scheduler = scheduler
         self.config = config
         self.registered = False
         self.identifier = str(uuid.uuid4())
@@ -50,15 +50,15 @@ class MQTTClient:
         if(method == "CONFIRM_REGISTER"):
             self.registered = True
 
-        elif(method == "TEMPLATE"):
+        elif(method == "RULES"):
 
             files = message["files"]
             if isinstance(files, list) and len(files) != 0:
                 for url in files:
                     utils.download_file(url, "static")
-
-            utils.store_static("current.html", message["html"])
-            self.window.load_url(utils.get_full_path("static/current.html"))
+            
+            rules = message["rules"]
+            self.scheduler.set_rules(rules)
 
     def publish_message(self, topic, payload):
         self.client.publish(topic, payload)
