@@ -1,6 +1,7 @@
 import os
 import time
 import subprocess
+import wifi
 
 def get_networks():
     return os.popen("nmcli -f SSID device wifi | awk 'NR>1' | sed 's/[[:space:]]*$//'").read().split("\n")[:-1]

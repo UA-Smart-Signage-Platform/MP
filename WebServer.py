@@ -12,6 +12,8 @@ import network_manager
 app = Flask(__name__)
 CORS(app)
 
+CONFIG_FILE = "config.ini"
+DEFAULT_CONFIG_FILE = "default_config.ini"
 
 @app.route("/ipma/temperature")
 def ipma_temp():
@@ -47,17 +49,17 @@ def ua_news():
 def update_config():
 
     config = configparser.ConfigParser()
-    if os.path.isfile("config.ini"):
-        config.read('config.ini')
+    if os.path.isfile(CONFIG_FILE):
+        config.read(CONFIG_FILE)
     else:
-        config.read('default_config.ini')
+        config.read(DEFAULT_CONFIG_FILE)
 
     for section in config.sections():
         for option in config.options(section):
             new_value = request.form.get(option)
             config.set(section, option, new_value)
 
-    with open('config.ini', 'w') as configfile:
+    with open(CONFIG_FILE, 'w') as configfile:
         config.write(configfile)
 
     ssid = request.form.get("network")
@@ -77,10 +79,10 @@ def update_config():
 def config():
 
     config = configparser.ConfigParser()
-    if os.path.isfile("config.ini"):
-        config.read('config.ini')
+    if os.path.isfile(CONFIG_FILE):
+        config.read(DEFAULT_CONFIG_FILE)
     else:
-        config.read('default_config.ini')
+        config.read(DEFAULT_CONFIG_FILE)
 
     networks = app.config["networks"]
     return render_template('config.html', config=config, networks=networks)
