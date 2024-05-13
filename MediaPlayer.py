@@ -36,9 +36,15 @@ def setup():
     # setup logging
     logging.basicConfig(level=config["Logging"]["log_level"], format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', filename=config["Logging"]["log_file"])
     mqtt_logger = logging.getLogger("MQTTClient")
+    scheduler_logger = logging.getLogger("Scheduler")
     logging.getLogger('werkzeug').disabled = True
     logging.getLogger('urllib3.connectionpool').disabled = True
     
+    # start the scheduler main loop
+    scheduler = Scheduler(scheduler_logger, config, window)
+    scheduler_thread = threading.Thread(target=scheduler.main_loop)
+    scheduler_thread.start()
+
     # create an instante of the mqtt client and start the loop
     mqtt_client = MQTTClient(mqtt_logger, config, scheduler)
     mqtt_client.start()
@@ -73,9 +79,5 @@ if __name__ == '__main__':
     
     else:
         window = webview.create_window('MediaPlayer', default_config["MediaPlayer"]["default_template"], fullscreen=True, confirm_close=False)
-    
-    scheduler = Scheduler(window)
-    scheduler_thread = threading.Thread(target=scheduler.main_loop)
-    scheduler_thread.start()
 
     webview.start(func=setup)

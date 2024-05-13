@@ -4,6 +4,7 @@ import sched
 import time
 import threading
 import utils
+import os
 
 class SchedulerRule:
     def __init__(self, start_hour, start_minute, end_hour, end_minute, start_date, end_date, priority, weekdays, template):
@@ -70,8 +71,11 @@ class SchedulerRule:
 
 class Scheduler:
 
-    def __init__(self, window):
-        self.window = window
+    def __init__(self, logger, config, window):
+        self.logger = logger
+        self.config = config
+        self.window = window        
+
         self.current_template = None
         self.rules = None
         self.stop = False
@@ -93,7 +97,6 @@ class Scheduler:
         current_time = time.time()
 
         for rule in self.rules:
-            #print(rule.start, rule.end)
             if current_time > rule.end.timestamp() or current_time < rule.start.timestamp():
                 continue
 
@@ -101,10 +104,17 @@ class Scheduler:
                 current_rule = rule
 
         if current_rule == None:
-            print("nothing!")
+            if self.config.getboolean('MediaPlayer', 'savings_mode'):
+                self.logger.info(f"No Rule to be Displayed. Blanking Screen")
+                os.system("xset dpms force off")
+            else:
+                self.logger.info(f"No Rule to be Displayed. Displaying Default Template")
+                self.window.load_url(self.config["MediaPlayer"]["default_template"])
+            
             self.current_template = None
         else:
-            print("displaying task", current_rule.start, current_rule.end)
+            os.system("xset dpms force on")
+            self.logger.info(f"Displaying Template for Fule [{current_rule.start}]-[{current_rule.end}]")
             if self.current_template != current_rule.template: 
                 self.current_template = current_rule.template
                 utils.store_static("current.html", current_rule.template)
@@ -125,7 +135,7 @@ class Scheduler:
 
         if next_iteration_timestamp is not None:
             delay = next_iteration_timestamp - current_time
-            print("next task at", datetime.fromtimestamp(next_iteration_timestamp))
+            self.logger.info(f"Next Iteration at {datetime.fromtimestamp(next_iteration_timestamp)}")
             while self.stop == False and time.time() < next_iteration_timestamp:
                 time.sleep(1)
             self.main_loop()
