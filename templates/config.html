@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuration</title>
+</head>
+<body>
+    <h1>Current Configuration</h1>
+
+    <form action="/updateConfig" method="post">
+        <h2>Network</h2>
+        <label for="network">Choose a Network:</label>
+        <select id="network" name="network">
+            {% for network in networks %}
+                <option value="{{ network }}">{{ network }}</option>
+            {% endfor %}
+        </select>
+        <label for="wifi_password">Password:</label>
+        <input type="password" id="wifi_password" name="wifi_password">
+
+        {% for section, options in config.items() %}
+            {% if section != 'DEFAULT' %}
+                <h2>{{ section }}</h2>
+                {% for option, value in options.items() %}
+                    <label for="{{ option }}">{{ option }}</label>
+                    <input type="text" id="{{ option }}" name="{{ option }}" value="{{ value }}"><br>
+                {% endfor %}
+            {% endif %}
+        {% endfor %}
+        <input type="submit" value="Update Configuration">
+    </form>
+</body>
+</html>
