@@ -1,7 +1,6 @@
 import os
 import time
 import subprocess
-import wifi
 import shlex
 
 def get_networks():
