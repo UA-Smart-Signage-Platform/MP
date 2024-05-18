@@ -103,9 +103,12 @@ class Scheduler:
             self.logger.info(f"Next Iteration at {datetime.fromtimestamp(next_iteration_timestamp)}")
             while self.stop == False and time.time() < next_iteration_timestamp:
                 time.sleep(1)
-            self.main_loop()
         else:
             self.logger.info("No More Rules")
+            while self.stop == False:
+                time.sleep(1)
+        
+        self.main_loop()
 
     def get_current_rule(self):
         current_rule = None
