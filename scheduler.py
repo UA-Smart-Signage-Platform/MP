@@ -94,9 +94,8 @@ class Scheduler:
         # step 1 - display the current rule
         self.display(self.get_current_rule())
 
-        # this sleep is to "fix" problems with rrule
-        # giving old values
-        time.sleep(5)
+        # this sleep is to "fix" problems with rrule giving old values
+        # time.sleep(1)
 
         # step 2 - sleep until next iteration
         next_iteration_timestamp = self.get_next_iteration_timestamp()
@@ -147,8 +146,9 @@ class Scheduler:
             
             self.current_template = None
         else:
-            os.system("xset dpms force on")
-            self.logger.info(f"Displaying Template for Fule [{rule.start}]-[{rule.end}]")
+            if self.config.getboolean('MediaPlayer', 'savings_mode'):
+                os.system("xset dpms force on")
+            self.logger.info(f"Displaying Template for Rule [{rule.start}]-[{rule.end}]")
             if self.current_template != rule.template: 
                 self.current_template = rule.template
                 utils.store_static("current.html", rule.template)
