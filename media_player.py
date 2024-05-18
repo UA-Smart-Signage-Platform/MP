@@ -13,7 +13,7 @@ import utils
 import urllib.request
 from protocol import MessageProtocol
 from scheduler import Scheduler
-import WebServer
+import web_server
 import threading
 import network_manager
 from mqtt_client import MQTTClient
@@ -59,7 +59,7 @@ if __name__ == '__main__':
     default_config.read(DEFAULT_CONFIG_FILE)
     
     networks = network_manager.get_networks()
-    flask_thread = threading.Thread(target=WebServer.run, daemon=True, args=(networks,))
+    flask_thread = threading.Thread(target=web_server.run, daemon=True, args=(networks,))
     flask_thread.start()
 
     if not os.path.isfile(CONFIG_FILE) or not network_manager.has_internet():

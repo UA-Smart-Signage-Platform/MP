@@ -20,14 +20,9 @@
     pip install -r requirements.txt
     ```
 
-5. **Run the flask WebServer:**
+5. **Run the MediaPlayer:**
     ```bash
-    python -m flask --app WebServer run
-    ```
-
-6. **Run the MediaPlayer:**
-    ```bash
-    python MediaPlayer.py
+    python media_player.py
     ```
 
 
