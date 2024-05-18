@@ -3,6 +3,8 @@ import utils
 import uuid
 from protocol import MessageProtocol
 import json
+import threading
+import time
 
 class MQTTClient:
     def __init__(self, logger, config, scheduler):
@@ -20,7 +22,7 @@ class MQTTClient:
         self.client.on_disconnect = self.on_disconnect
         
     def start(self):
-        self.client.connect_async(self.config["MQTT"]["host"], int(self.config["MQTT"]["port"]), int(self.config["MQTT"]["keepalive"]))
+        self.client.connect_async(self.config["MQTT"]["host"], int(self.config["MQTT"]["port"]), int(self.config["MQTT"]["keepalive_mqtt"]))
         self.client.loop_start()
 
     def on_connect(self, client, userdata, flags, reason_code, properties):
@@ -49,6 +51,8 @@ class MQTTClient:
 
         if(method == "CONFIRM_REGISTER"):
             self.registered = True
+            self.keepalive_thread = threading.Thread(target=self.keepalive_loop)
+            self.keepalive_thread.start()
 
         elif(method == "RULES"):
 
@@ -63,3 +67,11 @@ class MQTTClient:
     def publish_message(self, topic, payload):
         self.client.publish(topic, payload)
         self.logger.info(f"Sent message on topic '{topic}': {payload}")
+
+
+    def keepalive_loop(self):
+        while True:
+            self.publish_message(self.config["MQTT"]["keepalive_logs_topic"], MessageProtocol.keep_alive(self.identifier))
+
+            delay = int(self.config["MQTT"]["keepalive_logs_delay"])
+            time.sleep(delay)

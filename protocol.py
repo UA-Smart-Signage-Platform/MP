@@ -8,6 +8,6 @@ class MessageProtocol:
         return json.dumps(message)
 
     @classmethod
-    def log(cls, logs, uuid):
-        message = { "method":"LOG", "logs": logs, "uuid":uuid }
+    def keep_alive(cls, uuid):
+        message = { "method":"KEEP_ALIVE", "uuid":uuid }
         return json.dumps(message)
