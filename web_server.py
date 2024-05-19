@@ -8,9 +8,13 @@ from flask import render_template, redirect, url_for
 import configparser
 import os
 import network_manager
+from flask_wtf import CSRFProtect
 
 app = Flask(__name__)
 CORS(app)
+app.secret_key = os.urandom(12).hex()
+csrf = CSRFProtect()
+csrf.init_app(app)
 
 CONFIG_FILE = "config.ini"
 DEFAULT_CONFIG_FILE = "default_config.ini"
@@ -69,6 +73,9 @@ def ua_news():
 @app.route("/updateConfig", methods=['POST'])
 def update_config():
 
+    if not network_manager.is_hotspot():
+        return
+
     config = configparser.ConfigParser()
     if os.path.isfile(CONFIG_FILE):
         config.read(CONFIG_FILE)
@@ -98,6 +105,9 @@ def update_config():
 
 @app.route("/config", methods=['GET'])
 def config():
+
+    if not network_manager.is_hotspot():
+        return
 
     config = configparser.ConfigParser()
     if os.path.isfile(CONFIG_FILE):

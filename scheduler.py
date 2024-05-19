@@ -79,10 +79,14 @@ class Scheduler:
         self.current_template = None
         self.rules = None
         self.stop = False
+        self.full_stop = False
 
     def set_rules(self, rules):
         self.rules = [SchedulerRule.parse_rule(rule) for rule in rules if SchedulerRule.parse_rule(rule) is not None]
         self.stop = True
+
+    def stop():
+        self.full_stop = True
 
     def main_loop(self):
 
@@ -108,6 +112,9 @@ class Scheduler:
             while self.stop == False:
                 time.sleep(1)
         
+        if self.full_stop == True:
+            return
+
         self.main_loop()
 
     def get_current_rule(self):
