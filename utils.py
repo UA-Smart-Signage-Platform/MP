@@ -5,6 +5,7 @@ import jinja2
 import socket
 import qrcode
 import requests
+import uuid
 
 # strip html from string
 def striphtml(data):
@@ -77,3 +78,16 @@ def download_file(url, path_to_save):
     response = requests.get(url)
     with open(os.path.join(path_to_save, filename), "wb") as file:
         file.write(response.content)
+
+# get the identifier for the media player
+# create one if doesn't exist
+def get_uuid(file_path='uuid'):
+    if os.path.exists(file_path):
+        with open(file_path, 'r') as file:
+            file_uuid = file.read().strip()
+            return file_uuid
+    else:
+        new_uuid = str(uuid.uuid4())
+        with open(file_path, 'w') as file:
+            file.write(new_uuid)
+        return new_uuid
