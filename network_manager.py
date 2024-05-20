@@ -45,3 +45,7 @@ def get_ssid_and_password():
     result = os.popen("nmcli dev wifi show-password | awk '/SSID:/ { ssid = $2 } /Password:/ { password = $2 } END { print ssid, password }'").read().strip()
     split = result.split(" ")
     return (split[0], split[1])
+
+def disconnect_hotspot():
+    os.system("nmcli r wifi off")
+    os.system("nmcli r wifi on")

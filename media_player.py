@@ -70,7 +70,7 @@ if __name__ == '__main__':
         
         utils.generate_wifi_qrcode(ssid, password, target="static/qr_code.png")
         
-        url = utils.get_local_ip() + ":5000/config"
+        url = "http://10.42.0.1:5000/config"
 
         html = utils.render_jinja_html("templates", "setup.html", ssid=ssid, password=password, url=url)
         utils.store_static("setup.html", html)

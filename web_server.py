@@ -73,7 +73,7 @@ def ua_news():
 @app.route("/updateConfig", methods=['POST'])
 def update_config():
 
-    if not network_manager.is_hotspot():
+    if is_already_setup():
         return
 
     config = configparser.ConfigParser()
@@ -96,17 +96,17 @@ def update_config():
     if password != "":
         h_ssid, h_password = network_manager.get_ssid_and_password()
         network_manager.connect(ssid, password)
-
         if not network_manager.has_internet():
             network_manager.create_hotspot(h_ssid, h_password)
+    else:
+        network_manager.disconnect_hotspot()
 
-    return redirect(url_for('config'))
-
+    return "config updated"
 
 @app.route("/config", methods=['GET'])
 def config():
 
-    if not network_manager.is_hotspot():
+    if is_already_setup():
         return
 
     config = configparser.ConfigParser()
@@ -118,6 +118,11 @@ def config():
     networks = app.config["networks"]
     return render_template('config.html', config=config, networks=networks)
 
+def is_already_setup():
+    if not os.path.isfile(CONFIG_FILE) or not network_manager.has_internet():
+        return False
+    else:
+        return True
 
 def run(networks=None):
     app.config["networks"] = networks
