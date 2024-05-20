@@ -26,7 +26,7 @@ class SchedulerRule:
             return None
 
         if self.end < start_rule[0]:
-            return start_rule[0] - timedelta(days=1)
+            return start_rule[0] - timedelta(days=(7+1)-len(self.weekdays))
 
         return start_rule[0]
 
