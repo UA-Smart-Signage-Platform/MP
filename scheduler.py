@@ -152,7 +152,7 @@ class Scheduler:
                 os.system("xset dpms force off")
             else:
                 self.logger.info("No Rule to be Displayed. Displaying Default Template")
-                self.window.load_url(self.config["MediaPlayer"]["default_template"])
+                self.window.load_url(utils.get_full_path(self.config["MediaPlayer"]["default_template"]))
             
             self.current_template = None
         else:
