@@ -9,6 +9,7 @@
     <h1>Current Configuration</h1>
 
     <form action="/updateConfig" method="post">
+        <input type="hidden" name="csrf_token" value = "{{ csrf_token() }}" />
         <h2>Network</h2>
         <label for="network">Choose a Network:</label>
         <select id="network" name="network">

@@ -2,7 +2,7 @@
 
 1. **Install dependencies:**
     ```bash
-    sudo apt install libgirepository1.0-dev gcc libcairo2-dev pkg-config python3-dev gir1.2-gtk-4.0
+    sudo apt install libgirepository1.0-dev gcc libcairo2-dev pkg-config python3-dev gir1.2-gtk-4.0 python3-gi python3-gi-cairo gir1.2-gtk-3.0 gir1.2-webkit2-4.1
     ```
 
 2. **Create a virtual environment:**
@@ -20,14 +20,9 @@
     pip install -r requirements.txt
     ```
 
-5. **Run the flask WebServer:**
+5. **Run the MediaPlayer:**
     ```bash
-    python -m flask --app WebServer run
-    ```
-
-6. **Run the MediaPlayer:**
-    ```bash
-    python MediaPlayer.py
+    python media_player.py
     ```
 
 

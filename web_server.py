@@ -8,24 +8,49 @@ from flask import render_template, redirect, url_for
 import configparser
 import os
 import network_manager
+from flask_wtf import CSRFProtect
 
 app = Flask(__name__)
 CORS(app)
+app.secret_key = os.urandom(12).hex()
+csrf = CSRFProtect()
+csrf.init_app(app)
 
 CONFIG_FILE = "config.ini"
 DEFAULT_CONFIG_FILE = "default_config.ini"
 
 @app.route("/ipma/temperature")
 def ipma_temp():
-    url = "https://api.ipma.pt/open-data/observation/meteorology/stations/observations.json"
-    id_aveiro = "1210702"
+    
+    temperature_url = "https://api.ipma.pt/open-data/observation/meteorology/stations/observations.json"
+    stations_url = "https://api.ipma.pt/open-data/observation/meteorology/stations/stations.json"
+    requested_station = request.args.get('station')
 
-    # get json data of all stations
-    response = requests.get(url).json()
+    # get information of all the stations
+    stations = requests.get(stations_url).json()
+    # parse the json into a simpler list [(id,name), ...]
+    station_list = [(item['properties']['idEstacao'], item['properties']['localEstacao']) for item in stations]
+
+    fallback_station_id = "1210702" # Universidade de Aveiro
+    station_id = fallback_station_id
+
+    for station in station_list:
+        if station[1] == requested_station:
+            station_id = str(station[0])
+
+    # get temperature data of all stations
+    response = requests.get(temperature_url).json()
     # get the latest information
     key = sorted(list(response.keys()), reverse=True)[0]
     # get the temperature from the station we want
-    result = response[key][id_aveiro]["temperatura"]
+    station_info = response[key][station_id]
+
+    # if station does not exist use fallback
+    if station_info != None:
+        result = station_info["temperatura"]
+    else:
+        result = response[key][fallback_station_id]["temperatura"]
+        requested_station = ""
 
     return str(result) + "º C"
 
@@ -47,6 +72,9 @@ def ua_news():
 
 @app.route("/updateConfig", methods=['POST'])
 def update_config():
+
+    if not network_manager.is_hotspot():
+        return
 
     config = configparser.ConfigParser()
     if os.path.isfile(CONFIG_FILE):
@@ -77,6 +105,9 @@ def update_config():
 
 @app.route("/config", methods=['GET'])
 def config():
+
+    if not network_manager.is_hotspot():
+        return
 
     config = configparser.ConfigParser()
     if os.path.isfile(CONFIG_FILE):
