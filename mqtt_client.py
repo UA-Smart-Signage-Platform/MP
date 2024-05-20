@@ -15,7 +15,7 @@ class MQTTClient:
         self.identifier = str(uuid.uuid4())
         self.name = config["MQTT"]["name"]
     
-        self.client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2, transport=self.config["MQTT"]["transport"])
+        self.client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2, transport=self.config["MQTT"]["transport"], client_id=self.identifier, clean_session=False)
         self.client.username_pw_set(self.config["MQTT"]["username"], self.config["MQTT"]["password"])
         self.client.on_message = self.on_message
         self.client.on_connect = self.on_connect
@@ -33,7 +33,7 @@ class MQTTClient:
 
         # subscribe to topic with our unique identifier
         # so that the server can send us messages "directly"
-        client.subscribe(self.identifier)
+        client.subscribe(self.identifier, qos=1)
 
         # send register message
         width, height = utils.get_monitor_size()
