@@ -18,12 +18,7 @@ def connect(ssid, password):
 
     if not (3 <= len(ssid) <= 32 and 8 <= len(password) <= 63):
         return
-
-    # add quotation marks to the
-    # ssid and password
-    ssid = shlex.quote(ssid)
-    password = shlex.quote(password)
-
+        
     command = ["nmcli", "dev", "wifi", "connect", ssid, "password", password]
     return subprocess.run(command).returncode
 
