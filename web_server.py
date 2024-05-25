@@ -8,6 +8,7 @@ from flask import render_template, redirect, url_for
 import configparser
 import os
 import network_manager
+import utils
 from flask_wtf import CSRFProtect
 
 app = Flask(__name__)
@@ -73,7 +74,7 @@ def ua_news():
 @app.route("/updateConfig", methods=['POST'])
 def update_config():
 
-    if not network_manager.is_hotspot():
+    if is_already_setup():
         return
 
     config = configparser.ConfigParser()
@@ -92,21 +93,24 @@ def update_config():
 
     ssid = request.form.get("network")
     password = request.form.get("wifi_password")
+    h_ssid, h_password = network_manager.get_ssid_and_password()
 
     if password != "":
-        h_ssid, h_password = network_manager.get_ssid_and_password()
         network_manager.connect(ssid, password)
+        
+    if not network_manager.has_internet():
+        network_manager.create_hotspot(h_ssid, h_password)
+        return redirect("/config")
+    else:
+        network_manager.disconnect_hotspot()
 
-        if not network_manager.has_internet():
-            network_manager.create_hotspot(h_ssid, h_password)
-
-    return redirect(url_for('config'))
-
+    utils.get_uuid()
+    return "config updated"
 
 @app.route("/config", methods=['GET'])
 def config():
 
-    if not network_manager.is_hotspot():
+    if is_already_setup():
         return
 
     config = configparser.ConfigParser()
@@ -118,6 +122,11 @@ def config():
     networks = app.config["networks"]
     return render_template('config.html', config=config, networks=networks)
 
+def is_already_setup():
+    if not os.path.isfile(CONFIG_FILE) or not network_manager.has_internet():
+        return False
+    else:
+        return True
 
 def run(networks=None):
     app.config["networks"] = networks

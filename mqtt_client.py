@@ -11,11 +11,12 @@ class MQTTClient:
         self.logger = logger
         self.scheduler = scheduler
         self.config = config
-        self.registered = False
-        self.identifier = str(uuid.uuid4())
+        self.identifier = utils.get_uuid()
         self.name = config["MQTT"]["name"]
+        self.keepalive_thread = None
+        self.stop_keepalive_event = threading.Event()
     
-        self.client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2, transport=self.config["MQTT"]["transport"])
+        self.client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2, transport=self.config["MQTT"]["transport"], client_id=self.identifier, clean_session=False)
         self.client.username_pw_set(self.config["MQTT"]["username"], self.config["MQTT"]["password"])
         self.client.on_message = self.on_message
         self.client.on_connect = self.on_connect
@@ -27,13 +28,10 @@ class MQTTClient:
 
     def on_connect(self, client, userdata, flags, reason_code, properties):
         self.logger.info("Connected to Broker")
-        
-        if self.registered:
-            return
 
         # subscribe to topic with our unique identifier
         # so that the server can send us messages "directly"
-        client.subscribe(self.identifier)
+        client.subscribe(self.identifier, qos=1)
 
         # send register message
         width, height = utils.get_monitor_size()
@@ -41,6 +39,7 @@ class MQTTClient:
 
     def on_disconnect(self, client, userdata, flags, reason_code, properties):
         self.logger.error("Lost Connection to Broker")
+        self.stop_keepalive()
 
     def on_message(self, client, userdata, msg):
 
@@ -50,9 +49,8 @@ class MQTTClient:
         method = message["method"]
 
         if(method == "CONFIRM_REGISTER"):
-            self.registered = True
-            self.keepalive_thread = threading.Thread(target=self.keepalive_loop)
-            self.keepalive_thread.start()
+            self.stop_keepalive()
+            self.start_keepalive()
 
         elif(method == "RULES"):
 
@@ -70,8 +68,18 @@ class MQTTClient:
 
 
     def keepalive_loop(self):
-        while True:
+        while not self.stop_keepalive_event.is_set():
             self.publish_message(self.config["MQTT"]["keepalive_logs_topic"], MessageProtocol.keep_alive(self.identifier))
-
             delay = int(self.config["MQTT"]["keepalive_logs_delay"])
-            time.sleep(delay)
+            self.stop_keepalive_event.wait(delay) 
+
+    def start_keepalive(self):
+        if self.keepalive_thread is None or not self.keepalive_thread.is_alive():
+            self.stop_keepalive_event.clear()
+            self.keepalive_thread = threading.Thread(target=self.keepalive_loop)
+            self.keepalive_thread.start()
+
+    def stop_keepalive(self):
+        if self.keepalive_thread is not None:
+            self.stop_keepalive_event.set()
+            self.keepalive_thread.join()
