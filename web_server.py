@@ -94,7 +94,6 @@ def ua_events():
     else:
         location = ""
 
-    print(start_datetime, end_datetime)
     if start_date == end_date:
         date = start_date
     else:
@@ -103,7 +102,7 @@ def ua_events():
     return f'''
     <p style="font-size: 1.5vw; margin: 0; ">{date}</p>
     <p style="font-size: 1.1vw; margin: 0.1vw 0;">{location}</p>
-    <p style="font-size: 1.7vw; font-weight: bold; margin-top: 0.5vw;">{title}</p>
+    <p style="font-size: 1.7vw; font-weight: 600; margin-top: 0.5vw;">{title}</p>
     '''
 
 @app.route("/updateConfig", methods=['POST'])
