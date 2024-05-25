@@ -18,12 +18,11 @@
 <body style="background-color: black;">
 <img id="image" src="ua.jpg" alt="Popping Image" style="max-width: 20%;">
 <script>
-    // Array of possible positions for the image
-    function getRandomPercentage() {
-        return Math.random() * 75 + 5 + '%'; // Random value between 5% and 95%
+
+function getRandomPercentage() {
+        return Math.random() * 75 + 5 + '%'; 
     }
 
-    // Function to move the image to a random position and display it
     function moveImage() {
         var img = document.getElementById('image');
         img.style.top = getRandomPercentage();
@@ -32,14 +31,12 @@
         setTimeout(changeImage, 5000);
     }
 
-    // Function to hide the image
     function changeImage() {
         var img = document.getElementById('image');
         img.style.display = 'none';
         moveImage();
     }
 
-    // Start the screensaver
     moveImage();
 </script>
 </body>
