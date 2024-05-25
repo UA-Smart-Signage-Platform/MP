@@ -20,13 +20,11 @@ from mqtt_client import MQTTClient
 
 CONFIG_FILE = "config.ini"
 DEFAULT_CONFIG_FILE = "default_config.ini"
+UUID_FILE = "uuid"
 
 def setup():
 
-    while not os.path.exists(CONFIG_FILE):
-        time.sleep(1)
-        
-    while not network_manager.has_internet():
+    while not os.path.exists(CONFIG_FILE) or not os.path.exists(UUID_FILE):
         time.sleep(1)
 
     # load config
@@ -40,6 +38,11 @@ def setup():
     logging.getLogger('werkzeug').disabled = True
     logging.getLogger('urllib3.connectionpool').disabled = True
     
+    if os.path.isfile("static/current.html"):
+        window.load_url(utils.get_full_path("static/current.html"))
+    else:
+        window.load_url(utils.get_full_path(config["MediaPlayer"]["default_template"]))
+
     # start the scheduler main loop
     scheduler = Scheduler(scheduler_logger, config, window)
     scheduler_thread = threading.Thread(target=scheduler.main_loop)
@@ -49,8 +52,6 @@ def setup():
     mqtt_client = MQTTClient(mqtt_logger, config, scheduler)
     mqtt_client.start()
     
-    # change to the default template
-    window.load_url(utils.get_full_path(config["MediaPlayer"]["default_template"]))
         
 if __name__ == '__main__':
 
@@ -62,7 +63,7 @@ if __name__ == '__main__':
     flask_thread = threading.Thread(target=web_server.run, daemon=True, args=(networks,))
     flask_thread.start()
 
-    if not os.path.isfile(CONFIG_FILE) or not network_manager.has_internet():
+    if not os.path.isfile(CONFIG_FILE):
 
         ssid = "DetiSignage-" + str(uuid.uuid4())[:8]
         password = str(uuid.uuid4())[:8]

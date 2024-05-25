@@ -8,6 +8,7 @@ from flask import render_template, redirect, url_for
 import configparser
 import os
 import network_manager
+import utils
 from flask_wtf import CSRFProtect
 
 app = Flask(__name__)
@@ -92,15 +93,18 @@ def update_config():
 
     ssid = request.form.get("network")
     password = request.form.get("wifi_password")
+    h_ssid, h_password = network_manager.get_ssid_and_password()
 
     if password != "":
-        h_ssid, h_password = network_manager.get_ssid_and_password()
         network_manager.connect(ssid, password)
-        if not network_manager.has_internet():
-            network_manager.create_hotspot(h_ssid, h_password)
+        
+    if not network_manager.has_internet():
+        network_manager.create_hotspot(h_ssid, h_password)
+        return redirect("/config")
     else:
         network_manager.disconnect_hotspot()
 
+    utils.get_uuid()
     return "config updated"
 
 @app.route("/config", methods=['GET'])

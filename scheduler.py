@@ -147,13 +147,14 @@ class Scheduler:
 
     def display(self, rule):
         if rule == None:
+            self.window.load_url(utils.get_full_path(self.config["MediaPlayer"]["default_template"]))
+
             if self.config.getboolean('MediaPlayer', 'savings_mode'):
                 self.logger.info("No Rule to be Displayed. Blanking Screen")
                 os.system("xset dpms force off")
             else:
                 self.logger.info("No Rule to be Displayed. Displaying Default Template")
-                self.window.load_url(utils.get_full_path(self.config["MediaPlayer"]["default_template"]))
-            
+                        
             self.current_template = None
         else:
             if self.config.getboolean('MediaPlayer', 'savings_mode'):
