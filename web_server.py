@@ -7,7 +7,7 @@ from utils import striphtml
 from flask import render_template, redirect, url_for
 import configparser
 import os
-import random
+import secrets
 import network_manager
 import utils
 from flask_wtf import CSRFProtect
@@ -80,7 +80,7 @@ def ua_events():
 
     response = requests.get(url, headers=headers).content
     events = json.loads(response)["data"]["items"]
-    event = random.choice(events)
+    event = secrets.choice(events)
 
     title = event["title"]
 
