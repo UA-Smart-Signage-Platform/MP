@@ -7,9 +7,11 @@ from utils import striphtml
 from flask import render_template, redirect, url_for
 import configparser
 import os
+import secrets
 import network_manager
 import utils
 from flask_wtf import CSRFProtect
+from datetime import datetime
 
 app = Flask(__name__)
 CORS(app)
@@ -70,6 +72,38 @@ def ua_news():
     # remove any embedded html
     return striphtml(content)
 
+
+@app.route("/ua/events")
+def ua_events():
+    url = "https://timelyapp.time.ly/api/calendars/54725998/events"
+    headers = {"X-Api-Key":"c6e5e0363b5925b28552de8805464c66f25ba0ce"}
+
+    response = requests.get(url, headers=headers).content
+    events = json.loads(response)["data"]["items"]
+    event = secrets.choice(events)
+
+    title = event["title"]
+
+    start_datetime = datetime.strptime(event["start_utc_datetime"], "%Y-%m-%d %H:%M:%S")
+    start_date =start_datetime.strftime("%d-%m-%Y")
+    end_datetime = datetime.strptime(event["end_utc_datetime"], "%Y-%m-%d %H:%M:%S")
+    end_date =end_datetime.strftime("%d-%m-%Y")
+
+    if "taxonomy_venue" in event["taxonomies"].keys():
+        location = event["taxonomies"]["taxonomy_venue"][0]["title"]
+    else:
+        location = ""
+
+    if start_date == end_date:
+        date = start_date
+    else:
+        date = f"{start_date} - {end_date}"
+
+    return f'''
+    <p style="font-size: 1.5vw; margin: 0; ">{date}</p>
+    <p style="font-size: 1.1vw; margin: 0.1vw 0;">{location}</p>
+    <p style="font-size: 1.7vw; font-weight: 600; margin-top: 0.5vw;">{title}</p>
+    '''
 
 @app.route("/updateConfig", methods=['POST'])
 def update_config():
