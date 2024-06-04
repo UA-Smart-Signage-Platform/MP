@@ -57,6 +57,32 @@ def ipma_temp():
 
     return str(result) + "º C"
 
+@app.route("/ipma/weather")
+def ipma_weather():
+    urlCity = "https://api.ipma.pt/open-data/distrits-islands.json"
+    urlPrev = "http://api.ipma.pt/open-data/forecast/meteorology/cities/daily/[[urlchange]].json"
+    city = request.args.get('region')
+    re = requests.get(urlCity).json()
+
+    for data in re["data"]:
+        if data["local"] == city:
+            urlPrev = urlPrev.replace("[[urlchange]]",str(data["globalIdLocal"]))
+            break
+
+    re = requests.get(urlPrev).json()
+
+    return """
+        <div style="width:100%;height:100%;">
+            <div style="width:70%;height:100%;padding:4px;">
+                <p style="width:100%;height:50%; margin:0px;">max: {}</p>
+                <p style="width:100%;height:50%; top:50%;margin:0px;">min: {}</p>
+            </div>
+            <div style="width:30%;height:100%;left:70%;">
+                <img style="width:auto;height:auto;max-width:100%;max-height:100%;" src="../templates/weather/w_ic_d_{:02d}anim.svg"> 
+            </div>
+        </div>
+    """.format(str(re["data"][0]["tMax"]),str(re["data"][0]["tMin"]),re["data"][0]["idWeatherType"])
+
 
 @app.route("/ua/news")
 def ua_news():

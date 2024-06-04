@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg id="svg2" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://www.w3.org/2000/svg" height="500" width="500" version="1.1" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/">
+ <metadata id="metadata7">image/svg+xml
+  <rdf:RDF>
+   <cc:Work rdf:about="">
+    <dc:format>image/svg+xml</dc:format>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:title/>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <g id="g849">
+  <g id="g6">
+   <title id="title3">background</title>
+   <rect id="canvas_background" x="-1" y="-1" width="582" height="402" fill="none"/>
+  </g>
+  <g id="svg_12" transform="translate(0,40)" stroke="null">
+   <g id="svg_10" transform="matrix(.77553 0 0 .8252 -268.24 -247.95)">
+    <title id="title10" transform="translate(525.33 326.19)">background</title>
+    <rect id="svg_8" x="524.33" y="325.19" width="302" height="302" fill="none"/>
+   </g>
+   <g id="svg_11" transform="matrix(.77553 0 0 .8252 -268.24 -247.95)">
+    <title id="title14" transform="translate(525.33 326.19)">Layer 1</title>
+    <g id="svg_6" transform="rotate(15 675.33 474.69)">
+     <path id="svg_7" d="m741.96 520.21c-63.196 0-114.39-48.855-114.39-109.1 0-19.839 5.9698-38.187 15.679-54.203-52.676 14.492-91.42 60.271-91.42 115.16 0 66.48 56.502 120.4 126.21 120.4 57.557 0 105.59-36.978 120.78-87.186-16.825 9.2293-36.061 14.925-56.863 14.925z" fill="#4c4c4c" stroke="null"/>
+    </g>
+   </g>
+  </g>
+  <path id="path4-4" d="m420.69 308.24c-4.6518-7.2812-10.416-13.753-17.293-19.416-24.035-18.965-49.736-21.45-70.688-19.897-11.484-45.038-40.624-70.743-84.037-71.191-12.54 0-24.473 2.5282-35.799 7.5845s-21.136 11.528-29.428 19.416c-8.2925 7.8879-14.866 17.798-19.72 29.731-5.4652 15.294-6.8024 23.598-6.9778 39.389-15.62-3.9478-36.899-4.9476-50.058 0.30339-15.776 6.8766-26.9 18.607-33.372 35.192-4.0451 11.124-5.2586 22.046-3.6406 32.765s5.9665 20.529 13.045 29.428c7.0789 8.8992 15.978 15.371 26.697 19.416 7.4834 2.8316 14.866 4.2473 22.147 4.2473h217.83c17.394 0 33.372 2.7277 47.934-7.1828 35.442-25.003 42.38-69.05 23.36-99.787z" fill="#eee" stroke="#969696" stroke-width="15">
+   <animateTransform id="anim1" begin="0s;anim4.end" from="0 0" attributeName="transform" to="50 0" attributeType="xml" dur="1s" type="translate"/>
+   <animateTransform id="anim2" begin="anim1.end" from="50 0" attributeName="transform" to="0 0" attributeType="xml" dur="1s" type="translate"/>
+   <animateTransform id="anim3" begin="anim2.end" from="0 0" attributeName="transform" to="-60 0" attributeType="xml" dur="1s" type="translate"/>
+   <animateTransform id="anim4" begin="anim3.end" from="-60 0" attributeName="transform" to="0 0" attributeType="xml" dur="1s" type="translate"/>
+  </path>
+ </g>
+</svg>
