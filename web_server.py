@@ -55,7 +55,38 @@ def ipma_temp():
         result = response[key][fallback_station_id]["temperatura"]
         requested_station = ""
 
-    return str(result) + "º C"
+    return str(result) + "º"
+
+@app.route("/ipma/weather")
+def ipma_weather():
+    urlCity = "https://api.ipma.pt/open-data/distrits-islands.json"
+    urlPrev = "http://api.ipma.pt/open-data/forecast/meteorology/cities/daily/[[urlchange]].json"
+    city = request.args.get('region')
+    re = requests.get(urlCity).json()
+
+    for data in re["data"]:
+        if data["local"] == city:
+            urlPrev = urlPrev.replace("[[urlchange]]",str(data["globalIdLocal"]))
+            break
+
+    re = requests.get(urlPrev).json()
+
+    return """
+        <div style="width:100%;height:100%;">
+            <div style="width:100%;height:100%;">
+                <img style="width:auto;height:auto;max-width:100%;max-height:100%;" src="../templates/weather/w_ic_d_{:02d}anim.svg"> 
+            </div>
+        </div>
+    """.format(re["data"][0]["idWeatherType"],str(re["data"][0]["tMax"]),str(re["data"][0]["tMin"]))
+# codigo para criar widget com info acima isto fica dentro do div acima
+# <div style="width:50%;height:100%;left:50%;">
+#     <div style="width:100%;height:50%;position:absolute; margin:0px;">
+#         <div style="margin:0px;background-color:#FFA000;border-radius:10px 10px 0px 0px;padding-top:2px;">{}º</div>
+#     </div>
+#     <div style="width:100%;height:50%;top:50%;position:absolute; margin:0px;">
+#         <div style="margin:0px;background-color:#0080B0;border-radius:0px 0px 10px 10px;padding-bottom:2px;">{}º</div>
+#     </div>
+# </div>
 
 
 @app.route("/ua/news")
