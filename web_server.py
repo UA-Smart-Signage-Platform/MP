@@ -59,17 +59,17 @@ def ipma_temp():
 
 @app.route("/ipma/weather")
 def ipma_weather():
-    urlCity = "https://api.ipma.pt/open-data/distrits-islands.json"
-    urlPrev = "http://api.ipma.pt/open-data/forecast/meteorology/cities/daily/[[urlchange]].json"
+    url_city = "https://api.ipma.pt/open-data/distrits-islands.json"
+    url_prev = "https://api.ipma.pt/open-data/forecast/meteorology/cities/daily/[[urlchange]].json"
     city = request.args.get('region')
-    re = requests.get(urlCity).json()
+    re = requests.get(url_city).json()
 
     for data in re["data"]:
         if data["local"] == city:
-            urlPrev = urlPrev.replace("[[urlchange]]",str(data["globalIdLocal"]))
+            url_prev = url_prev.replace("[[urlchange]]",str(data["globalIdLocal"]))
             break
 
-    re = requests.get(urlPrev).json()
+    re = requests.get(url_prev).json()
 
     return """
         <div style="width:100%;height:100%;">
@@ -77,7 +77,8 @@ def ipma_weather():
                 <img style="width:auto;height:auto;max-width:100%;max-height:100%;" src="../templates/weather/w_ic_d_{:02d}anim.svg"> 
             </div>
         </div>
-    """.format(re["data"][0]["idWeatherType"],str(re["data"][0]["tMax"]),str(re["data"][0]["tMin"]))
+    """.format(re["data"][0]["idWeatherType"])
+
 # codigo para criar widget com info acima isto fica dentro do div acima
 # <div style="width:50%;height:100%;left:50%;">
 #     <div style="width:100%;height:50%;position:absolute; margin:0px;">

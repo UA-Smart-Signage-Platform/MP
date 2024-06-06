@@ -9,7 +9,7 @@ import uuid
 
 # strip html from string
 def striphtml(data):
-    p = re.compile(r'<.*?>')
+    p = re.compile(r'<[^>]+>')
     return p.sub('', data)
 
 # get the correct path to be given
