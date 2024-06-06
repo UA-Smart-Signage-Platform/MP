@@ -99,7 +99,7 @@ class Scheduler:
         self.display(self.get_current_rule())
 
         # this sleep is to "fix" problems with rrule giving old values
-        # time.sleep(1)
+        time.sleep(1)
 
         # step 2 - sleep until next iteration
         next_iteration_timestamp = self.get_next_iteration_timestamp()
