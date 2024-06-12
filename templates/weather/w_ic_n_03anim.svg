@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg id="svg2" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://www.w3.org/2000/svg" height="500" width="500" version="1.1" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/">
+ <metadata id="metadata7">
+  <rdf:RDF>
+   <cc:Work rdf:about="">
+    <dc:format>image/svg+xml</dc:format>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:title/>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <g id="g20" transform="matrix(1.3632 0 0 1.3632 -90.114 -95.566)">
+  <title id="title8">Layer 1</title>
+  <g id="svg_12" stroke="null">
+   <g id="svg_10" transform="matrix(.78877 0 0 .82189 -372.41 -414.39)">
+    <title id="title10" transform="translate(638.45 662.64)">background</title>
+    <rect id="svg_8" x="637.45" y="661.64" width="302" height="302" fill="none"/>
+   </g>
+   <g id="svg_11" transform="matrix(.78877 0 0 .82189 -372.41 -414.39)">
+    <title id="title14" transform="translate(638.45 662.64)">Layer 1</title>
+    <g id="svg_6" transform="rotate(15 788.45 811.14)">
+     <path id="svg_7" d="m855.08 856.65c-63.196 0-114.39-48.855-114.39-109.1 0-19.839 5.9698-38.187 15.679-54.203-52.676 14.492-91.42 60.271-91.42 115.16 0 66.48 56.502 120.4 126.21 120.4 57.557 0 105.59-36.978 120.78-87.186-16.825 9.2293-36.061 14.925-56.863 14.925z" fill="#4c4c4c" stroke="null"/>
+    </g>
+   </g>
+  </g>
+ </g>
+ <path id="path4-4" d="m321.85 335.59c-3.8841-6.0795-8.6971-11.484-14.439-16.212-20.068-15.835-41.528-17.91-59.022-16.613-9.5886-37.605-33.92-59.069-70.168-59.442-10.47 0-20.434 2.1109-29.891 6.3328-9.4571 4.2219-17.648 9.6259-24.571 16.212-6.924 6.5862-12.412 14.861-16.465 24.825-4.5632 12.77-5.6798 19.704-5.8263 32.889-13.042-3.2963-30.81-4.1311-41.797 0.25331-13.172 5.7418-22.46 15.537-27.865 29.384-3.3775 9.2882-4.3908 18.407-3.0398 27.358 1.351 8.9504 4.9818 17.141 10.893 24.571 5.9107 7.4305 13.341 12.835 22.292 16.212 6.2484 2.3643 12.412 3.5464 18.492 3.5464h181.88c14.523 0 27.865 2.2776 40.024-5.9974 29.593-20.877 35.386-57.655 19.505-83.319z" fill="#ddd" opacity=".9" stroke="#969696" stroke-width="15" glyph-name="cloud-6" horiz-adv-x="1205.1" unicode="">
+  <animateTransform id="anim1" begin="0s;anim2.end" from="0 0" attributeName="transform" to="80 0" attributeType="xml" dur="1.5s" type="translate"/>
+  <animateTransform id="anim2" begin="anim1.end" from="80 0" attributeName="transform" to="0 0" attributeType="xml" dur="1.5s" type="translate"/>
+ </path>
+ <path id="path4895" d="m465.03 147.42c-3.057-4.7849-6.8451-9.0382-11.364-12.76-15.8-12.461-32.69-14.094-46.46-13.073-7.54-29.598-26.69-46.491-55.22-46.785-8.2408 0-16.083 1.6614-23.526 4.9843-7.4433 3.3229-13.89 7.5762-19.339 12.76-5.4496 5.1837-9.7693 11.697-12.959 19.539-3.5915 10.051-4.4704 15.508-4.5856 25.885-10.265-2.5944-24.249-3.2514-32.896 0.19937-10.367 4.5191-17.678 12.228-21.931 23.127-2.6583 7.3103-3.4558 14.488-2.3924 21.532 1.0633 7.0445 3.921 13.491 8.573 19.339 4.652 5.8483 10.5 10.102 17.545 12.76 4.9179 1.8608 9.7692 2.7912 14.554 2.7912h143.15c11.431 0 21.931 1.7926 31.501-4.7203 23.291-16.431 27.85-45.377 15.352-65.577z" fill="#fff" opacity=".9" stroke="#969696" stroke-width="15" glyph-name="cloud-6" horiz-adv-x="1205.1" unicode="">
+  <animateTransform id="anim3" begin="0s;anim4.end" from="0 0" attributeName="transform" to="-80 0" attributeType="xml" dur="1.5s" type="translate"/>
+  <animateTransform id="anim4" begin="anim3.end" from="-80 0" attributeName="transform" to="0 0" attributeType="xml" dur="1.5s" type="translate"/>
+ </path>
+</svg>

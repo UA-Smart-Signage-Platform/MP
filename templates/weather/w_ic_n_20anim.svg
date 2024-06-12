@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg id="svg2" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://www.w3.org/2000/svg" height="500" width="500" version="1.1" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/">
+ <metadata id="metadata7">
+  <rdf:RDF>
+   <cc:Work rdf:about="">
+    <dc:format>image/svg+xml</dc:format>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:title/>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <g id="g20" transform="matrix(1.0858 0 0 1.0858 103.89 -147.14)">
+  <title id="title8">Layer 1</title>
+  <g id="svg_12" stroke="null">
+   <g id="svg_10" transform="matrix(.78877 0 0 .82189 -372.41 -414.39)">
+    <title id="title10" transform="translate(638.45 662.64)">background</title>
+    <rect id="svg_8" x="637.45" y="661.64" width="302" height="302" fill="none"/>
+   </g>
+   <g id="svg_11" transform="matrix(.78877 0 0 .82189 -372.41 -414.39)">
+    <title id="title14" transform="translate(638.45 662.64)">Layer 1</title>
+    <g id="svg_6" transform="rotate(15 788.45 811.14)">
+     <path id="svg_7" d="m855.08 856.65c-63.196 0-114.39-48.855-114.39-109.1 0-19.839 5.9698-38.187 15.679-54.203-52.676 14.492-91.42 60.271-91.42 115.16 0 66.48 56.502 120.4 126.21 120.4 57.557 0 105.59-36.978 120.78-87.186-16.825 9.2293-36.061 14.925-56.863 14.925z" fill="#4c4c4c" stroke="null"/>
+    </g>
+   </g>
+  </g>
+ </g>
+ <g stroke="#969696">
+  <path id="path4-0" d="m287.41 193.19-46.527 144.13 56.035 7.834-131.21 148.85 59.893-118.98-56.291-7.7269z" fill="#ffc800" stroke-linejoin="round" stroke-width="11.992" glyph-name="flash-2" horiz-adv-x="928" unicode="">
+  <animate id="anim1" begin="0s;anim2.end" from="#ffffff" attributeName="fill" to="#ffffff" dur="1s"/>
+  <animate id="anim2" begin="anim1.end" from="#ffffff" attributeName="fill" to="#ffc800" dur="0.5s"/>
+ </path>
+  <path id="path4-4" d="m421.36 214.9c-4.673-7.3171-10.457-13.808-17.361-19.5-24.127-19.037-49.934-21.533-70.967-19.973-11.531-45.217-40.79-71.024-84.371-71.473-12.59 0-24.57 2.5382-35.941 7.6146-11.371 5.0764-21.219 11.574-29.545 19.494-8.3254 7.9192-14.924 17.869-19.798 29.849-5.4868 15.355-6.8295 23.692-7.0055 39.545-15.682-3.9634-37.045-4.9672-50.256 0.30459-15.839 6.9039-27.006 18.681-33.504 35.332-4.0611 11.168-5.2795 22.133-3.655 32.896 1.6244 10.762 5.9902 20.61 13.097 29.545 7.107 8.9345 16.042 15.432 26.803 19.494 7.5132 2.8428 14.924 4.2642 22.235 4.2642h218.69c17.463 0 33.504 2.7385 48.125-7.2113 35.583-25.102 42.547-69.324 23.453-100.18z" fill="#ccc" stroke-width="15" glyph-name="cloud-6" horiz-adv-x="1205.1" unicode=""/>
+  <path id="path9411" d="m146.63 258.97-48.322 34.125c-10.211 7.1853-16.444 19.537-15.313 32.839 1.6508 20.05 19.322 34.914 39.372 33.263 20.05-1.6509 34.914-19.322 33.263-39.372l-5.017-58.997c-0.14954-1.9622-2.287-2.959-3.9835-1.8575z" fill="#3dade2" stroke-width="11.992" glyph-name="weather" horiz-adv-x="1000" unicode="">
+  <animateTransform id="anim3" from="40 -40" repeatCount="indefinite" attributeName="transform" to="-10 60" attributeType="xml" dur="1s" type="translate"/>
+  <animate id="anim4" from="0" repeatCount="indefinite" attributeName="opacity" to="1" dur="1s"/>
+ </path>
+  <path id="path2990" d="m366.63 311.47-48.322 34.125c-10.211 7.1853-16.444 19.537-15.313 32.839 1.6508 20.05 19.322 34.914 39.372 33.263 20.05-1.6509 34.914-19.322 33.263-39.372l-5.017-58.997c-0.14954-1.9622-2.287-2.959-3.9835-1.8575z" fill="#3dade2" stroke-width="11.992" glyph-name="weather" horiz-adv-x="1000" unicode="">
+  <animateTransform id="anim5" from="20 -60" repeatCount="indefinite" attributeName="transform" to="-10 35" attributeType="xml" dur="1.5s" type="translate"/>
+  <animate id="anim6" from="0" repeatCount="indefinite" attributeName="opacity" to="1" dur="1.5s"/>
+ </path>
+ </g>
+</svg>
