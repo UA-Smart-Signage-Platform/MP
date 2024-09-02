@@ -25,7 +25,11 @@ def setup():
 
     # load config
     config = configparser.ConfigParser()
-    config.read(CONFIG_FILE)
+    
+    if os.path.isfile(CONFIG_FILE):
+        config.read(CONFIG_FILE)
+    else:
+        config.read(DEFAULT_CONFIG_FILE)
 
     # setup logging
     logging.basicConfig(level=config["Logging"]["log_level"], format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', filename=config["Logging"]["log_file"])
