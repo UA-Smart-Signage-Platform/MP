@@ -15,7 +15,6 @@ from protocol import MessageProtocol
 from scheduler import Scheduler
 import web_server
 import threading
-import network_manager
 from mqtt_client import MQTTClient
 
 CONFIG_FILE = "config.ini"
@@ -23,9 +22,6 @@ DEFAULT_CONFIG_FILE = "default_config.ini"
 UUID_FILE = "uuid"
 
 def setup():
-
-    while not os.path.exists(CONFIG_FILE) or not os.path.exists(UUID_FILE):
-        time.sleep(1)
 
     # load config
     config = configparser.ConfigParser()
@@ -59,26 +55,9 @@ if __name__ == '__main__':
     default_config = configparser.ConfigParser()
     default_config.read(DEFAULT_CONFIG_FILE)
     
-    networks = network_manager.get_networks()
-    flask_thread = threading.Thread(target=web_server.run, daemon=True, args=(networks,))
+    flask_thread = threading.Thread(target=web_server.run, daemon=True)
     flask_thread.start()
 
-    if not os.path.isfile(CONFIG_FILE):
-
-        ssid = "DetiSignage-" + str(uuid.uuid4())[:8]
-        password = str(uuid.uuid4())[:8]
-        network_manager.create_hotspot(ssid,password)
-        
-        utils.generate_wifi_qrcode(ssid, password, target="static/qr_code.png")
-        
-        url = "http://10.42.0.1:5000/config"
-
-        html = utils.render_jinja_html("templates", "setup.html", ssid=ssid, password=password, url=url)
-        utils.store_static("setup.html", html)
-        
-        window = webview.create_window('MediaPlayer', "static/setup.html", fullscreen=True)
-    
-    else:
-        window = webview.create_window('MediaPlayer', default_config["MediaPlayer"]["default_template"], fullscreen=True, confirm_close=False)
+    window = webview.create_window('MediaPlayer', default_config["MediaPlayer"]["default_template"], fullscreen=True, confirm_close=False)
 
     webview.start(func=setup)

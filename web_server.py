@@ -8,16 +8,12 @@ from flask import render_template, redirect, url_for
 import configparser
 import os
 import secrets
-import network_manager
 import utils
 from flask_wtf import CSRFProtect
 from datetime import datetime
 
 app = Flask(__name__)
 CORS(app)
-app.secret_key = os.urandom(12).hex()
-csrf = CSRFProtect()
-csrf.init_app(app)
 
 CONFIG_FILE = "config.ini"
 DEFAULT_CONFIG_FILE = "default_config.ini"
@@ -137,63 +133,5 @@ def ua_events():
     <p style="font-size: 1.7vw; font-weight: 600; margin-top: 0.5vw;">{title}</p>
     '''
 
-@app.route("/updateConfig", methods=['POST'])
-def update_config():
-
-    if is_already_setup():
-        return
-
-    config = configparser.ConfigParser()
-    if os.path.isfile(CONFIG_FILE):
-        config.read(CONFIG_FILE)
-    else:
-        config.read(DEFAULT_CONFIG_FILE)
-
-    for section in config.sections():
-        for option in config.options(section):
-            new_value = request.form.get(option)
-            config.set(section, option, new_value)
-
-    with open(CONFIG_FILE, 'w') as configfile:
-        config.write(configfile)
-
-    ssid = request.form.get("network")
-    password = request.form.get("wifi_password")
-    h_ssid, h_password = network_manager.get_ssid_and_password()
-
-    if password != "":
-        network_manager.connect(ssid, password)
-        
-    if not network_manager.has_internet():
-        network_manager.create_hotspot(h_ssid, h_password)
-        return redirect("/config")
-    else:
-        network_manager.disconnect_hotspot()
-
-    utils.get_uuid()
-    return "config updated"
-
-@app.route("/config", methods=['GET'])
-def config():
-
-    if is_already_setup():
-        return
-
-    config = configparser.ConfigParser()
-    if os.path.isfile(CONFIG_FILE):
-        config.read(CONFIG_FILE)
-    else:
-        config.read(DEFAULT_CONFIG_FILE)
-
-    networks = app.config["networks"]
-    return render_template('config.html', config=config, networks=networks)
-
-def is_already_setup():
-    if not os.path.isfile(CONFIG_FILE) or not network_manager.has_internet():
-        return False
-    else:
-        return True
-
-def run(networks=None):
-    app.config["networks"] = networks
+def run():
     app.run(host="0.0.0.0", port=5000, use_reloader=False)

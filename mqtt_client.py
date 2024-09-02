@@ -66,7 +66,6 @@ class MQTTClient:
         self.client.publish(topic, payload)
         self.logger.info(f"Sent message on topic '{topic}': {payload}")
 
-
     def keepalive_loop(self):
         while not self.stop_keepalive_event.is_set():
             self.publish_message(self.config["MQTT"]["keepalive_logs_topic"], MessageProtocol.keep_alive(self.identifier))
